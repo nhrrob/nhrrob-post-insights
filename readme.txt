@@ -1,0 +1,51 @@
+=== NHR Post Insights ===
+Contributors: nhrrob
+Tags: analytics, statistics, post views, referrers, privacy
+Requires at least: 6.6
+Tested up to: 7.1
+Requires PHP: 7.4
+Stable tag: 0.1.0
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
+How many readers each post gets, where they come from and how long they stay. No cookies, and the numbers stay on your site.
+
+== Description ==
+NHR Post Insights counts the views of your posts and pages and shows them in the dashboard. It sets no cookie, stores nothing in the visitor's browser and sends nothing to another service.
+
+### What it shows
+- **Dashboard → Post Insights** has three screens, each for the last 7, 30 or 90 days.
+- **Overview**: views, the average time on a post, and a chart of views per day.
+- **Posts**: views and average time for each post, most viewed first.
+- **Referrers**: the sites readers followed a link from.
+
+### What is counted
+- A view is counted when the page is actually looked at, not when it loads in a background tab.
+- Time is counted only while the tab is in view, up to 30 minutes for one view.
+- Your own views are not counted while you are logged in as someone who can write posts. Crawlers and link previews are left out.
+- Posts that are not published, or that have a password, are not counted.
+
+### What is stored
+Two small tables hold one number per post per day, and one per post, day and referring site. Of a referrer only the site's name is kept, never the page. No IP address is stored.
+
+== External services ==
+This plugin does not connect to any external service.
+
+== Frequently Asked Questions ==
+
+= Does it work with a page cache? =
+Yes. The view is reported by a small script in the page, so a cached page is counted like any other.
+
+= Do I need a cookie notice for it? =
+The plugin sets no cookie and keeps nothing that identifies a visitor. Whether your site needs a notice for other reasons is for you to check.
+
+= Why is the number lower than in another tool? =
+Visitors who block scripts are not counted, and neither are crawlers, your own views or tabs that were never looked at.
+
+= What is removed when I delete the plugin? =
+Its two tables and its one option.
+
+== Changelog ==
+
+= 0.1.0 =
+* First version: views, average time and referrers per post, with a chart of views per day.

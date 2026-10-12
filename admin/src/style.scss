@@ -1,0 +1,950 @@
+/*
+ * NHR Post Insights — admin app styles.
+ * Every colour is a custom property on .nhrrob-post-insights-app (see .ai/DESIGN.md),
+ * redefined for the dark theme. No framework, no icon font.
+ */
+$p: 'nhrrob-post-insights';
+
+@mixin dark-tokens {
+	--ir-primary: #adb6c0;
+	--ir-primary-600: #58a6ff;
+	--ir-grad-a: #2b3138;
+	--ir-grad-b: #4a535d;
+	--ir-soft: #21262d;
+	--ir-glow: rgba(0, 0, 0, 0.45);
+	--ir-success: #3ccf8a;
+	--ir-warning: #f5a742;
+	--ir-danger: #f2685c;
+	--ir-info: #6aaef2;
+	--ir-success-bg: rgba(60, 207, 138, 0.14);
+	--ir-warning-bg: rgba(245, 167, 66, 0.14);
+	--ir-danger-bg: rgba(242, 104, 92, 0.15);
+	--ir-info-bg: rgba(106, 174, 242, 0.14);
+	--ir-surface: #161b22;
+	--ir-bg: #0d1117;
+	--ir-sunken: #10151c;
+	--ir-border: #262d36;
+	--ir-border-strong: #363e48;
+	--ir-text: #e6edf3;
+	--ir-muted: #9198a1;
+	--ir-shadow: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
+	--ir-shadow-lg: 0 14px 38px rgba(0, 0, 0, 0.6);
+	color-scheme: dark;
+}
+
+.#{$p}-app {
+	--ir-primary: #32383f;
+	--ir-primary-600: #0969da;
+	--ir-grad-a: #24292f;
+	--ir-grad-b: #57606a;
+	--ir-gradient: linear-gradient(135deg, var(--ir-grad-a) 0%, var(--ir-grad-b) 100%);
+	--ir-soft: #eaeef2;
+	--ir-glow: rgba(36, 41, 47, 0.25);
+	--ir-on-primary: #fff;
+	--ir-on-primary-dim: rgba(255, 255, 255, 0.18);
+	--ir-success: #12a15c;
+	--ir-warning: #c96a04;
+	--ir-danger: #d6362a;
+	--ir-info: #2a7fd6;
+	--ir-success-bg: #e8f7ef;
+	--ir-warning-bg: #fdf1e0;
+	--ir-danger-bg: #fdecea;
+	--ir-info-bg: #e8f1fc;
+	--ir-surface: #fff;
+	--ir-bg: #f6f8fa;
+	--ir-sunken: #eef1f4;
+	--ir-border: #e1e5ea;
+	--ir-border-strong: #cfd6dd;
+	--ir-text: #1f2328;
+	--ir-muted: #59636e;
+	--ir-shadow: 0 1px 3px rgba(15, 31, 36, 0.07), 0 1px 2px rgba(15, 31, 36, 0.05);
+	--ir-shadow-lg: 0 12px 32px rgba(15, 31, 36, 0.13);
+	--ir-radius: 12px;
+	--ir-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+	margin: 20px 0 0;
+	border: 1px solid var(--ir-border);
+	border-radius: var(--ir-radius);
+	overflow: hidden;
+	background: var(--ir-bg);
+	color: var(--ir-text);
+	font-size: 14px;
+	line-height: 1.5;
+	box-shadow: var(--ir-shadow);
+
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
+
+	&[data-theme='dark'] {
+		@include dark-tokens;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		&:not([data-theme='light']) {
+			@include dark-tokens;
+		}
+	}
+
+	h1,
+	h2,
+	h3 {
+		color: inherit;
+	}
+
+	p {
+		font-size: inherit;
+		margin: 0 0 10px;
+	}
+
+	a {
+		color: var(--ir-primary-600);
+	}
+
+	code {
+		font-family: var(--ir-mono);
+		font-size: 12.5px;
+		background: var(--ir-sunken);
+		color: inherit;
+		padding: 1px 5px;
+		border-radius: 5px;
+	}
+
+	button:focus-visible,
+	a:focus-visible,
+	input:focus-visible,
+	select:focus-visible {
+		outline: 2px solid var(--ir-primary);
+		outline-offset: 2px;
+		box-shadow: none;
+	}
+}
+
+/*
+ * Dark mode covers the whole screen, not only the app. The tokens live on
+ * .nhrrob-post-insights-app and never reach its ancestors, so the page canvas around
+ * it (wp-admin's light html/body background and the footer) is painted here.
+ * :has() reads the theme from the app, so the toggle needs no extra code.
+ * The admin menu and toolbar draw their own backgrounds and are unaffected.
+ * The hex values are --ir-bg and --ir-muted of the dark theme.
+ */
+html:has(.#{$p}-app[data-theme='dark']),
+html:has(.#{$p}-app[data-theme='dark']) body {
+	background: #0d1117;
+	color-scheme: dark;
+}
+
+html:has(.#{$p}-app[data-theme='dark']) #wpfooter {
+	color: #9198a1;
+}
+
+@media (prefers-color-scheme: dark) {
+	html:has(.#{$p}-app:not([data-theme='light'])),
+	html:has(.#{$p}-app:not([data-theme='light'])) body {
+		background: #0d1117;
+		color-scheme: dark;
+	}
+
+	html:has(.#{$p}-app:not([data-theme='light'])) #wpfooter {
+		color: #9198a1;
+	}
+}
+
+/* ---- App bar and nav ---- */
+.#{$p}-bar {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 14px 20px;
+	background: var(--ir-gradient);
+	color: var(--ir-on-primary);
+
+	&__mark {
+		display: grid;
+		place-items: center;
+		width: 30px;
+		height: 30px;
+		border-radius: 9px;
+		background: var(--ir-on-primary-dim);
+	}
+
+	&__title {
+		font-size: 17px;
+		font-weight: 600;
+	}
+
+	&__spacer {
+		flex: 1;
+	}
+
+	&__btn {
+		display: inline-grid;
+		place-items: center;
+		width: 32px;
+		height: 32px;
+		border: 0;
+		border-radius: 8px;
+		cursor: pointer;
+		background: var(--ir-on-primary-dim);
+		color: var(--ir-on-primary);
+
+		&:hover {
+			filter: brightness(1.15);
+		}
+	}
+}
+
+.#{$p}-body {
+	display: flex;
+	min-height: 560px;
+}
+
+.#{$p}-nav {
+	flex: 0 0 216px;
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	padding: 14px 12px;
+	background: var(--ir-surface);
+	border-right: 1px solid var(--ir-border);
+
+	&__item {
+		display: flex;
+		align-items: center;
+		gap: 11px;
+		width: 100%;
+		padding: 9px 12px;
+		border: 0;
+		border-radius: 10px;
+		background: transparent;
+		color: var(--ir-muted);
+		font-size: 14px;
+		font-weight: 500;
+		cursor: pointer;
+		text-align: left;
+		white-space: nowrap;
+
+		&:hover {
+			background: var(--ir-soft);
+			color: var(--ir-primary-600);
+		}
+
+		&.is-active {
+			background: var(--ir-gradient);
+			color: var(--ir-on-primary);
+			box-shadow: 0 4px 12px var(--ir-glow);
+		}
+
+		&.is-last {
+			margin-top: 9px;
+			position: relative;
+
+			&::before {
+				content: '';
+				position: absolute;
+				left: 8px;
+				right: 8px;
+				top: -6px;
+				border-top: 1px solid var(--ir-border);
+			}
+		}
+	}
+}
+
+.#{$p}-app.is-collapsed {
+	.#{$p}-nav {
+		flex-basis: 60px;
+	}
+
+	.#{$p}-nav__label {
+		display: none;
+	}
+
+	.#{$p}-nav__item {
+		justify-content: center;
+		padding-left: 0;
+		padding-right: 0;
+	}
+}
+
+.#{$p}-icon {
+	flex: 0 0 auto;
+}
+
+.#{$p}-content {
+	flex: 1;
+	min-width: 0;
+	padding: 24px;
+}
+
+.#{$p}-screen {
+	// Two classes: wp-admin's `.wrap h1` would otherwise win.
+	.#{$p}-app &__title {
+		margin: 0;
+		padding: 0;
+		font-size: 20px;
+		font-weight: 700;
+		letter-spacing: -0.2px;
+		line-height: 1.3;
+	}
+
+	&__lede {
+		margin: 4px 0 20px;
+		color: var(--ir-muted);
+		font-size: 13.5px;
+		max-width: 75ch;
+	}
+}
+
+/* ---- Panels ---- */
+.#{$p}-panel {
+	background: var(--ir-surface);
+	border: 1px solid var(--ir-border);
+	border-radius: var(--ir-radius);
+	box-shadow: var(--ir-shadow);
+	margin-bottom: 18px;
+	transition: box-shadow 200ms;
+
+	&.is-focused {
+		box-shadow: 0 0 0 3px var(--ir-glow);
+	}
+
+	&__head {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 8px 12px;
+		padding: 14px 20px;
+		border-bottom: 1px solid var(--ir-border);
+	}
+
+	&__title {
+		margin: 0 auto 0 0;
+		padding: 0;
+		font-size: 15px;
+		font-weight: 600;
+		display: flex;
+		align-items: center;
+		gap: 9px;
+
+		.#{$p}-icon {
+			color: var(--ir-primary);
+		}
+	}
+
+	&__meta {
+		font-size: 12.5px;
+		color: var(--ir-muted);
+	}
+
+	&__body {
+		padding: 18px 20px;
+
+		&.is-flush {
+			padding: 0;
+		}
+	}
+}
+
+.#{$p}-pad {
+	padding: 16px 20px;
+
+	> :last-child {
+		margin-bottom: 0;
+	}
+}
+
+.#{$p}-two {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+	gap: 18px;
+	margin-bottom: 18px;
+
+	> .#{$p}-panel {
+		margin-bottom: 0;
+		min-width: 0;
+	}
+}
+
+.#{$p}-muted {
+	color: var(--ir-muted);
+	max-width: 80ch;
+}
+
+.#{$p}-sub {
+	color: var(--ir-muted);
+	font-size: 12px;
+}
+
+.#{$p}-empty {
+	margin: 0;
+	padding: 18px 20px;
+	color: var(--ir-muted);
+}
+
+.#{$p}-gap {
+	margin-top: 12px;
+}
+
+/* ---- Buttons, pills, controls ---- */
+.#{$p}-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	padding: 8px 14px;
+	border: 1px solid transparent;
+	border-radius: 10px;
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.4;
+	cursor: pointer;
+	white-space: nowrap;
+	text-decoration: none;
+
+	&:disabled {
+		opacity: 0.55;
+		cursor: default;
+	}
+
+	&--primary {
+		background: var(--ir-gradient);
+		color: var(--ir-on-primary) !important;
+
+		&:hover:not(:disabled) {
+			box-shadow: 0 6px 16px var(--ir-glow);
+		}
+	}
+
+	&--soft {
+		background: var(--ir-soft);
+		color: var(--ir-primary-600) !important;
+	}
+
+	&--ghost {
+		background: var(--ir-surface);
+		border-color: var(--ir-border-strong);
+		color: var(--ir-text);
+
+		&:hover:not(:disabled) {
+			border-color: var(--ir-primary);
+			color: var(--ir-primary-600);
+		}
+	}
+
+	&--danger {
+		background: transparent;
+		border-color: var(--ir-danger);
+		color: var(--ir-danger);
+
+		&:hover:not(:disabled) {
+			background: var(--ir-danger);
+			color: var(--ir-on-primary);
+		}
+	}
+
+	&--sm {
+		padding: 5px 10px;
+		font-size: 12px;
+		border-radius: 8px;
+	}
+}
+
+.#{$p}-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 2px 9px;
+	border-radius: 20px;
+	font-size: 11.5px;
+	font-weight: 600;
+	white-space: nowrap;
+
+	&::before {
+		content: '';
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: currentColor;
+	}
+
+	&--ok {
+		background: var(--ir-success-bg);
+		color: var(--ir-success);
+	}
+
+	&--warn {
+		background: var(--ir-warning-bg);
+		color: var(--ir-warning);
+	}
+
+	&--bad {
+		background: var(--ir-danger-bg);
+		color: var(--ir-danger);
+	}
+
+	&--info {
+		background: var(--ir-info-bg);
+		color: var(--ir-info);
+	}
+
+	&--off {
+		background: var(--ir-sunken);
+		color: var(--ir-muted);
+	}
+}
+
+
+.#{$p}-nav__count {
+	margin-left: auto;
+	min-width: 20px;
+	padding: 1px 6px;
+	border-radius: 20px;
+	background: var(--ir-sunken);
+	color: var(--ir-muted);
+	font-size: 11.5px;
+	font-weight: 600;
+	text-align: center;
+}
+
+.#{$p}-nav__item.is-active .#{$p}-nav__count {
+	background: var(--ir-on-primary-dim);
+	color: var(--ir-on-primary);
+}
+
+.#{$p}-app.is-collapsed .#{$p}-nav__count {
+	display: none;
+}
+
+.#{$p}-external {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 5px;
+	text-decoration: none;
+
+	&:hover {
+		text-decoration: underline;
+	}
+
+	.#{$p}-icon {
+		align-self: center;
+		opacity: 0.7;
+	}
+}
+
+/* ---- Forms ---- */
+.#{$p}-split {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+	gap: 18px;
+	align-items: start;
+}
+
+.#{$p}-form {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	&__foot {
+		display: flex;
+		justify-content: flex-end;
+		padding-top: 4px;
+	}
+}
+
+.#{$p}-field {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+
+	&__label {
+		font-size: 12.5px;
+		font-weight: 600;
+		color: var(--ir-muted);
+	}
+
+	.#{$p}-app &__help {
+		margin: 0;
+		font-size: 12.5px;
+		color: var(--ir-muted);
+	}
+}
+
+.#{$p}-app .#{$p}-input {
+	width: 100%;
+	max-width: 100%;
+	min-height: 36px;
+	margin: 0;
+	padding: 7px 11px;
+	border: 1px solid var(--ir-border-strong);
+	border-radius: 9px;
+	background-color: var(--ir-surface);
+	color: var(--ir-text);
+	font-size: 13.5px;
+	font-weight: 400;
+	line-height: 1.5;
+	box-shadow: none;
+
+	&::placeholder {
+		color: var(--ir-muted);
+		opacity: 0.8;
+	}
+
+	&:focus {
+		border-color: var(--ir-primary);
+		box-shadow: 0 0 0 3px var(--ir-glow);
+		outline: 0;
+	}
+
+	&.is-mono {
+		font-family: var(--ir-mono);
+		font-size: 12.5px;
+	}
+}
+
+.#{$p}-app select.#{$p}-input {
+	padding-right: 28px;
+}
+
+.#{$p}-app textarea.#{$p}-input {
+	resize: vertical;
+}
+
+.#{$p}-inline {
+	margin-top: 14px;
+
+	&__row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+
+		.#{$p}-input {
+			flex: 1 1 280px;
+			width: auto;
+		}
+	}
+}
+
+.#{$p}-similar {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	li {
+		margin: 0;
+		padding: 11px 20px;
+		border-bottom: 1px solid var(--ir-border);
+
+		&:last-child {
+			border-bottom: 0;
+		}
+	}
+
+	&__number {
+		font-family: var(--ir-mono);
+		font-size: 12.5px;
+		color: var(--ir-muted);
+		margin-right: 2px;
+	}
+
+	.#{$p}-app &__none {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin: 0;
+		color: var(--ir-success);
+	}
+}
+
+.#{$p}-empty {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 6px;
+}
+
+.#{$p}-loading {
+	height: 180px;
+	border-radius: var(--ir-radius);
+	background: linear-gradient(90deg, var(--ir-sunken) 25%, var(--ir-surface) 50%, var(--ir-sunken) 75%);
+	background-size: 200% 100%;
+	animation: #{$p}-shimmer 1.4s linear infinite;
+}
+
+@keyframes #{$p}-shimmer {
+	to {
+		background-position: -200% 0;
+	}
+}
+
+.#{$p}-note {
+	display: flex;
+	gap: 10px;
+	padding: 11px 14px;
+	border-radius: 10px;
+	background: var(--ir-info-bg);
+	font-size: 13px;
+	margin: 14px 0 0;
+
+	.#{$p}-icon {
+		color: var(--ir-info);
+		margin-top: 1px;
+	}
+
+	&--warn {
+		background: var(--ir-warning-bg);
+
+		.#{$p}-icon {
+			color: var(--ir-warning);
+		}
+	}
+
+	.#{$p}-btn {
+		margin-left: 6px;
+	}
+}
+
+.#{$p}-screen > .#{$p}-note {
+	margin: 0 0 18px;
+}
+
+/* ---- Tables ---- */
+.#{$p}-scroll {
+	overflow-x: auto;
+}
+
+.#{$p}-grid {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 13px;
+
+	th {
+		text-align: left;
+		padding: 10px 16px;
+		font-size: 11.5px;
+		text-transform: uppercase;
+		letter-spacing: 0.4px;
+		color: var(--ir-muted);
+		font-weight: 600;
+		background: var(--ir-sunken);
+		border-bottom: 1px solid var(--ir-border);
+		white-space: nowrap;
+	}
+
+	td {
+		padding: 11px 16px;
+		border-bottom: 1px solid var(--ir-border);
+		vertical-align: middle;
+		white-space: nowrap;
+		font-variant-numeric: tabular-nums;
+
+		&.is-wrap {
+			white-space: normal;
+			min-width: 200px;
+			word-break: break-word;
+		}
+
+		&.is-mono {
+			font-family: var(--ir-mono);
+			font-size: 12.5px;
+		}
+
+		.#{$p}-input {
+			min-width: 320px;
+		}
+	}
+
+	tr:last-child td {
+		border-bottom: 0;
+	}
+}
+
+/* ---- Toasts ---- */
+.#{$p}-toasts {
+	position: fixed;
+	right: 24px;
+	bottom: 24px;
+	z-index: 100000;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.#{$p}-toast {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	max-width: 420px;
+	padding: 10px 14px;
+	border-radius: 10px;
+	background: #1f2328;
+	color: #fff;
+	font-size: 13px;
+	font-weight: 600;
+	box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+
+	&--error {
+		background: #d6362a;
+	}
+}
+
+@media (max-width: 960px) {
+	.#{$p}-split {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+@media (max-width: 782px) {
+	.#{$p}-body {
+		flex-direction: column;
+	}
+
+	.#{$p}-nav,
+	.#{$p}-app.is-collapsed .#{$p}-nav {
+		flex: 0 0 auto;
+		flex-direction: row;
+		overflow-x: auto;
+		border-right: 0;
+		border-bottom: 1px solid var(--ir-border);
+		padding: 10px;
+	}
+
+	.#{$p}-app.is-collapsed .#{$p}-nav__label {
+		display: inline;
+	}
+
+	.#{$p}-nav__item,
+	.#{$p}-app.is-collapsed .#{$p}-nav__item {
+		width: auto;
+		padding: 9px 12px;
+
+		&.is-last {
+			margin-top: 0;
+
+			&::before {
+				display: none;
+			}
+		}
+	}
+
+	.#{$p}-content {
+		padding: 16px;
+	}
+}
+
+/* The filter row, the totals and the chart of views per day */
+.#{$p}-range {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 16px;
+}
+
+.#{$p}-tiles {
+	display: grid;
+	gap: 16px;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	margin-bottom: 16px;
+}
+
+.#{$p}-tile {
+	background: var(--ir-surface);
+	border: 1px solid var(--ir-border);
+	border-radius: 10px;
+	box-shadow: var(--ir-shadow);
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding: 18px 20px;
+
+	&__label {
+		color: var(--ir-muted);
+		font-size: 13px;
+	}
+
+	&__value {
+		color: var(--ir-text);
+		font-size: 28px;
+		font-variant-numeric: tabular-nums;
+		font-weight: 600;
+		line-height: 1.15;
+	}
+}
+
+.#{$p}-chart {
+	&__top,
+	&__axis {
+		color: var(--ir-muted);
+		display: flex;
+		font-size: 12px;
+		font-variant-numeric: tabular-nums;
+		justify-content: space-between;
+	}
+
+	&__top {
+		min-height: 20px;
+	}
+
+	&__tip {
+		color: var(--ir-text);
+		font-weight: 600;
+	}
+
+	&__bars {
+		align-items: stretch;
+		border-bottom: 1px solid var(--ir-border-strong);
+		border-top: 1px dashed var(--ir-border);
+		display: flex;
+		height: 200px;
+		list-style: none;
+		margin: 6px 0;
+		padding: 0;
+	}
+
+	&__day {
+		flex: 1 1 0;
+		margin: 0;
+		min-width: 0;
+	}
+
+	// The whole column is the target, so a low bar is as easy to point at as a high one.
+	&__hit {
+		align-items: flex-end;
+		background: none;
+		border: 0;
+		cursor: default;
+		display: flex;
+		height: 100%;
+		padding: 0 1px;
+		width: 100%;
+
+		&.is-active,
+		&:focus-visible {
+			background: var(--ir-soft);
+			outline: none;
+		}
+	}
+
+	&__bar {
+		background: var(--ir-primary-600);
+		border-radius: 4px 4px 0 0;
+		display: block;
+		margin: 0 auto;
+		max-width: 24px;
+		width: 100%;
+	}
+}
+
+.#{$p}-grid .is-number {
+	font-variant-numeric: tabular-nums;
+	text-align: right;
+	white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.#{$p}-app * {
+		transition: none !important;
+		animation: none !important;
+	}
+}
