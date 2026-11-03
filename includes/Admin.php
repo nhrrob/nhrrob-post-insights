@@ -92,6 +92,7 @@ class Admin {
 				'nonce'      => wp_create_nonce( 'wp_rest' ),
 				'pluginName' => __( 'Post Insights', 'nhrrob-post-insights' ),
 				'version'    => NHRROB_POST_INSIGHTS_VERSION,
+				'extra'      => Columns::get(),
 			]
 		);
 

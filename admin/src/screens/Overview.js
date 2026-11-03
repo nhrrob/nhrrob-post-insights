@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 
 import DayChart from '../components/DayChart';
 import { Panel, ScreenHeader } from '../components/ui';
-import { average, count } from '../format';
+import { average, byKind, count } from '../format';
 
 const P = 'nhrrob-post-insights-';
 
@@ -18,7 +18,7 @@ function Tile( { label, value } ) {
 	);
 }
 
-export default function Overview( { data, range } ) {
+export default function Overview( { data, range, extra } ) {
 	return (
 		<>
 			<ScreenHeader
@@ -45,6 +45,16 @@ export default function Overview( { data, range } ) {
 					label={ __( 'Posts read', 'nhrrob-post-insights' ) }
 					value={ count( data.posts.length ) }
 				/>
+				{ ( extra.tiles || [] ).map( ( tile ) => (
+					<Tile
+						key={ tile.key }
+						label={ tile.label }
+						value={ byKind(
+							tile.kind,
+							( data.extra || {} )[ tile.key ]
+						) }
+					/>
+				) ) }
 			</div>
 			<Panel
 				title={ __( 'Views per day', 'nhrrob-post-insights' ) }

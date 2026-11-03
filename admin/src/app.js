@@ -13,7 +13,8 @@ import Posts from './screens/Posts';
 import Referrers from './screens/Referrers';
 
 const SCREENS = { overview: Overview, posts: Posts, referrers: Referrers };
-const RANGES = [ 7, 30, 90 ];
+// 0 is all time.
+const RANGES = [ 7, 30, 90, 0 ];
 
 export default function App( { boot } ) {
 	const [ active, setActive ] = useState( 'overview' );
@@ -50,11 +51,13 @@ export default function App( { boot } ) {
 					aria-pressed={ option === days }
 					onClick={ () => setDays( option ) }
 				>
-					{ sprintf(
-						/* translators: %d: number of days. */
-						__( 'Last %d days', 'nhrrob-post-insights' ),
-						option
-					) }
+					{ option
+						? sprintf(
+								/* translators: %d: number of days. */
+								__( 'Last %d days', 'nhrrob-post-insights' ),
+								option
+						  )
+						: __( 'All time', 'nhrrob-post-insights' ) }
 				</Button>
 			) ) }
 		</div>
@@ -64,7 +67,14 @@ export default function App( { boot } ) {
 	if ( failed ) {
 		content = <Note tone="warn">{ failed }</Note>;
 	} else if ( data ) {
-		content = <Screen data={ data } range={ range } />;
+		content = (
+			<Screen
+				data={ data }
+				range={ range }
+				days={ days }
+				extra={ boot.extra || {} }
+			/>
+		);
 	}
 
 	return (
