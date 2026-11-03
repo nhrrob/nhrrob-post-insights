@@ -4,7 +4,7 @@ Tags: analytics, statistics, post views, referrers, privacy
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.1.0
+Stable tag: 0.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -14,9 +14,9 @@ How many readers each post gets, where they come from and how long they stay. No
 NHR Post Insights counts the views of your posts and pages and shows them in the dashboard. It sets no cookie, stores nothing in the visitor's browser and sends nothing to another service.
 
 ### What it shows
-- **Dashboard → Post Insights** has three screens, each for the last 7, 30 or 90 days.
+- **Dashboard → Post Insights** has three screens, each for the last 7, 30 or 90 days, or all time.
 - **Overview**: views, the average time on a post, and a chart of views per day.
-- **Posts**: views and average time for each post, most viewed first.
+- **Posts**: every published post with its views and average time, sortable by title, date, views or average time.
 - **Referrers**: the sites readers followed a link from.
 
 ### What is counted
@@ -46,6 +46,11 @@ Visitors who block scripts are not counted, and neither are crawlers, your own v
 Its two tables and its one option.
 
 == Changelog ==
+
+= 0.2.0 =
+* Posts lists every published post, also those without a view, sortable by title, date, views and average time, 20 to a page, with a link to edit each.
+* "All time" next to 7, 30 and 90 days on every screen.
+* An add-on can add columns to Posts and tiles to Overview with the filters `nhrrob_post_insights_columns` and `nhrrob_post_insights_posts`.
 
 = 0.1.0 =
 * First version: views, average time and referrers per post, with a chart of views per day.

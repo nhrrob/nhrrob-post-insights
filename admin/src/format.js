@@ -13,18 +13,13 @@ export function count( value ) {
 }
 
 /**
- * Average time a reader stayed, from the seconds and views of the same rows.
+ * A number of seconds as a duration.
  *
- * @param {number} seconds Seconds in total.
- * @param {number} views   Views in total.
- * @return {string} Such as "2 min 05 s", or a dash without views.
+ * @param {number} seconds Seconds.
+ * @return {string} Such as "45 s" or "2 min 05 s".
  */
-export function average( seconds, views ) {
-	if ( ! views ) {
-		return '–';
-	}
-
-	const each = Math.round( seconds / views );
+export function duration( seconds ) {
+	const each = Math.round( Number( seconds ) );
 
 	if ( each < 60 ) {
 		/* translators: %d: seconds. */
@@ -37,6 +32,40 @@ export function average( seconds, views ) {
 		Math.floor( each / 60 ),
 		String( each % 60 ).padStart( 2, '0' )
 	);
+}
+
+/**
+ * Average time a reader stayed, from the seconds and views of the same rows.
+ *
+ * @param {number} seconds Seconds in total.
+ * @param {number} views   Views in total.
+ * @return {string} Such as "2 min 05 s", or a dash without views.
+ */
+export function average( seconds, views ) {
+	return views ? duration( seconds / views ) : '–';
+}
+
+/**
+ * A value an add-on gave, written by the kind it declared.
+ *
+ * @param {string} kind  number, time or text.
+ * @param {*}      value The value; missing shows a dash.
+ * @return {string} The value as text.
+ */
+export function byKind( kind, value ) {
+	if ( value === undefined || value === null || value === '' ) {
+		return '–';
+	}
+
+	if ( 'number' === kind ) {
+		return count( value );
+	}
+
+	if ( 'time' === kind ) {
+		return duration( value );
+	}
+
+	return String( value );
 }
 
 /**

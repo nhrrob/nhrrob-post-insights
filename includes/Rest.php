@@ -1,6 +1,6 @@
 <?php
 /**
- * The REST routes: two the tracking script calls for every visitor, one the dashboard app reads.
+ * The REST routes: two the tracking script calls for every visitor, two the dashboard app reads.
  *
  * @package NHRRob\PostInsights
  */
@@ -75,6 +75,17 @@ class Rest {
 
 		register_rest_route(
 			self::REST_NAMESPACE,
+			'/posts',
+			[
+				'methods'             => 'GET',
+				'callback'            => [ $this, 'posts' ],
+				'permission_callback' => [ self::class, 'can_view' ],
+				'args'                => self::posts_args(),
+			]
+		);
+
+		register_rest_route(
+			self::REST_NAMESPACE,
 			'/stats',
 			[
 				'methods'             => 'GET',
@@ -88,6 +99,37 @@ class Rest {
 				],
 			]
 		);
+	}
+
+	/**
+	 * The arguments of GET /posts. `days` 0 is all time.
+	 *
+	 * @return array
+	 */
+	public static function posts_args() {
+		return [
+			'days'    => [
+				'type'              => 'integer',
+				'default'           => 30,
+				'sanitize_callback' => 'absint',
+			],
+			'orderby' => [
+				'type'    => 'string',
+				'default' => 'views',
+				'enum'    => array_keys( Store::ORDERBY ),
+			],
+			'order'   => [
+				'type'    => 'string',
+				'default' => 'desc',
+				'enum'    => [ 'asc', 'desc' ],
+			],
+			'page'    => [
+				'type'              => 'integer',
+				'default'           => 1,
+				'sanitize_callback' => 'absint',
+				'minimum'           => 1,
+			],
+		];
 	}
 
 	/**
@@ -151,5 +193,15 @@ class Rest {
 	 */
 	public function stats( $request ) {
 		return rest_ensure_response( Store::stats( $request['days'] ) );
+	}
+
+	/**
+	 * One page of the table of every post.
+	 *
+	 * @param \WP_REST_Request $request Request.
+	 * @return \WP_REST_Response
+	 */
+	public function posts( $request ) {
+		return rest_ensure_response( Store::posts( $request['days'], $request['orderby'], $request['order'], $request['page'] ) );
 	}
 }

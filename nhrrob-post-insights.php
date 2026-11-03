@@ -5,7 +5,7 @@
  * Description: How many readers each post gets, where they come from and how long they stay. No cookies, and the numbers stay on your site.
  * Author: Nazmul Hasan Robin
  * Author URI: https://profiles.wordpress.org/nhrrob/
- * Version: 0.1.0
+ * Version: 0.2.0
  * Requires at least: 6.6
  * Requires PHP: 7.4
  * Text Domain: nhrrob-post-insights
@@ -31,7 +31,7 @@ final class NHRRob_Post_Insights {
 	 *
 	 * @var string
 	 */
-	const VERSION = '0.1.0';
+	const VERSION = '0.2.0';
 
 	/**
 	 * Class constructor

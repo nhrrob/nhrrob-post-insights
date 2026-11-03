@@ -12,6 +12,12 @@ Show a site owner how many readers each post gets, where they come from and how 
 - Dashboard → Post Insights: Overview (totals and views per day), Posts, Referrers, each for 7, 30 or 90 days.
 - Not counted: logged-in users who can edit posts, crawlers, unpublished and password-protected posts.
 
+## Version 0.2
+
+- Posts is the table of every published post, sortable and paged by the route, with the post's date and a link to edit it.
+- "All time" as a range on every screen.
+- An add-on declares columns for Posts and tiles for Overview, and fills them; the app draws them by kind (number, time or text), so the add-on needs no script.
+
 ## Left out on purpose
 
 - **Unique visitors.** Telling two views apart needs something that identifies the visitor for a day, a hash of the address at least. Left until there is a way that keeps rule 1 of `CLAUDE.md`.

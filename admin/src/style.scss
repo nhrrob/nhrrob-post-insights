@@ -760,6 +760,56 @@ html:has(.#{$p}-app[data-theme='dark']) #wpfooter {
 	}
 }
 
+.#{$p}-sort {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+	font: inherit;
+	letter-spacing: inherit;
+	text-transform: inherit;
+	cursor: pointer;
+
+	&__arrow {
+		opacity: 0;
+	}
+
+	&:hover &__arrow,
+	&:focus-visible &__arrow,
+	&.is-active &__arrow {
+		opacity: 1;
+	}
+
+	&.is-active {
+		color: var(--ir-text);
+	}
+}
+
+.#{$p}-edit {
+	margin-left: 10px;
+	color: var(--ir-muted);
+	font-size: 12px;
+
+	&:hover,
+	&:focus {
+		color: var(--ir-primary-600);
+	}
+}
+
+.#{$p}-pager {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 12px;
+	padding: 10px 16px;
+	border-top: 1px solid var(--ir-border);
+	color: var(--ir-muted);
+	font-size: 13px;
+}
+
 /* ---- Toasts ---- */
 .#{$p}-toasts {
 	position: fixed;

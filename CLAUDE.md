@@ -23,9 +23,10 @@ uninstall.php              drops the two tables and deletes the option, per site
 includes/
   Installer.php    the two tables, created on activation and when DB_VERSION changes
   Visit.php        which visits count: is_bot(), host(), seconds(), counts()
-  Store.php        add_view(), add_seconds(), stats()
+  Store.php        add_view(), add_seconds(), stats(), posts()
   Tracker.php      enqueues assets/tracker.js on a single post or page, for visitors
-  Rest.php         POST /view and /time (open), GET /stats (gated)
+  Rest.php         POST /view and /time (open), GET /stats and /posts (gated)
+  Columns.php      the columns and tiles an add-on declares
   Admin.php        Dashboard → Post Insights: mount point, enqueue, boot data
 assets/tracker.js  reports the view and the time in view; plain script, not built
 admin/src/         React source: index.js, app.js, api.js, format.js, components/ (AppShell, ui, DayChart, toasts), screens/ (Overview, Posts, Referrers), style.scss
@@ -50,14 +51,17 @@ A day is the site's own date (`current_time()`). Average time is `seconds / view
 
 - `POST /view`: `post`, `referrer` → `204`. Counts one view today, and the referring host when it is another site.
 - `POST /time`: `post`, `seconds` → `204`. Adds seconds, at most `Visit::MAX_SECONDS` per request.
-- `GET /stats?days=30`: `days` (each with `day`, `views`, `seconds`, empty days included), `views`, `seconds`, `posts` (top 50), `referrers` (top 50).
+- `GET /stats?days=30`: `days` (each with `day`, `views`, `seconds`, empty days included), `views`, `seconds`, `posts` (top 50), `referrers` (top 50). `days=0` is all time, from the first day with a view.
+- `GET /posts?days=30&orderby=views&order=desc&page=1`: one page (`Store::PER_PAGE`, 20) of every published, public post, also those without a view: `posts` (each with `id`, `title`, `link`, `edit`, `date`, `views`, `seconds`, `extra`), `total`, `pages`. `orderby` is `title`, `date`, `views` or `average`. Behind `Rest::can_view()`.
 
 ## Hooks for an add-on
 
 - filter `nhrrob_post_insights_capability`: who may see the numbers.
 - filter `nhrrob_post_insights_counts`: whether views of a post are counted.
 - action `nhrrob_post_insights_view`: after a view was counted, with the post ID and the referring host.
-- filter `nhrrob_post_insights_stats`: the numbers before they go to the app.
+- filter `nhrrob_post_insights_stats`: the numbers before they go to the app. An add-on's tile values go in `extra`, by key.
+- filter `nhrrob_post_insights_columns`: `[ 'columns' => [...], 'tiles' => [...] ]`, each entry `key`, `label`, `kind` (`number`, `time` in seconds, or `text`). `Columns::get()` drops a malformed entry and passes the rest to the app as `nhrrobPostInsightsApp.extra`.
+- filter `nhrrob_post_insights_posts`: the rows of one page of `GET /posts`, with the days; fill a declared column in each row's `extra`, by key. Only that page's rows, so an add-on never loads every post.
 
 ## Commands
 
