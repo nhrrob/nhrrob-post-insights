@@ -9,7 +9,7 @@ import { average, byKind, count } from '../format';
 
 const P = 'nhrrob-post-insights-';
 
-function Tile( { label, value } ) {
+export function Tile( { label, value } ) {
 	return (
 		<div className={ P + 'tile' }>
 			<span className={ P + 'tile__label' }>{ label }</span>

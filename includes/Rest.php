@@ -96,6 +96,10 @@ class Rest {
 						'default'           => 30,
 						'sanitize_callback' => 'absint',
 					],
+					'post' => [
+						'default'           => 0,
+						'sanitize_callback' => 'absint',
+					],
 				],
 			]
 		);
@@ -186,13 +190,13 @@ class Rest {
 	}
 
 	/**
-	 * The numbers of the last days.
+	 * The numbers of the last days, of the site or of one post.
 	 *
 	 * @param \WP_REST_Request $request Request.
 	 * @return \WP_REST_Response
 	 */
 	public function stats( $request ) {
-		return rest_ensure_response( Store::stats( $request['days'] ) );
+		return rest_ensure_response( Store::stats( $request['days'], $request['post'] ) );
 	}
 
 	/**

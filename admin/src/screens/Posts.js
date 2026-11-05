@@ -56,7 +56,7 @@ function SortHeader( { id, label, sort, onSort, number } ) {
 	);
 }
 
-export default function Posts( { range, days, extra } ) {
+export default function Posts( { range, days, extra, onOpen } ) {
 	const [ sort, setSort ] = useState( { orderby: 'views', order: 'desc' } );
 	const [ page, setPage ] = useState( 1 );
 	const [ table, setTable ] = useState( null );
@@ -163,6 +163,16 @@ export default function Posts( { range, days, extra } ) {
 									<External href={ post.link }>
 										{ post.title }
 									</External>
+									<button
+										type="button"
+										className={ P + 'edit' }
+										onClick={ () => onOpen( post ) }
+									>
+										{ __(
+											'Details',
+											'nhrrob-post-insights'
+										) }
+									</button>
 									{ post.edit && (
 										<a
 											className={ P + 'edit' }
