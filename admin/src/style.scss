@@ -892,8 +892,35 @@ html:has(.#{$p}-app[data-theme='dark']) #wpfooter {
 .#{$p}-range {
 	display: flex;
 	flex-wrap: wrap;
+	align-items: center;
 	gap: 8px;
 	margin-bottom: 16px;
+
+	&__dates {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		color: var(--ir-muted);
+	}
+}
+
+/* A control that sits in a row: the dates, the type, the title search */
+.#{$p}-app .#{$p}-input--inline {
+	width: auto;
+	min-height: 30px;
+	padding: 3px 10px;
+	font-size: 12.5px;
+	color-scheme: light;
+}
+
+.#{$p}-app[data-theme='dark'] .#{$p}-input--inline {
+	color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+	.#{$p}-app:not([data-theme='light']) .#{$p}-input--inline {
+		color-scheme: dark;
+	}
 }
 
 .#{$p}-tiles {

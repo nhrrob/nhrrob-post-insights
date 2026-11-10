@@ -56,21 +56,40 @@ function SortHeader( { id, label, sort, onSort, number } ) {
 	);
 }
 
-export default function Posts( { range, days, extra, onOpen } ) {
+export default function Posts( {
+	range,
+	query,
+	search,
+	onSearch,
+	extra,
+	onOpen,
+} ) {
 	const [ sort, setSort ] = useState( { orderby: 'views', order: 'desc' } );
 	const [ page, setPage ] = useState( 1 );
 	const [ table, setTable ] = useState( null );
 	const [ failed, setFailed ] = useState( '' );
+	const [ words, setWords ] = useState( search );
 	const columns = extra.columns || [];
 
-	// A new range starts again from the first page.
-	useEffect( () => setPage( 1 ), [ days ] );
+	// The search is asked for once typing pauses, and only when it changed.
+	useEffect( () => {
+		if ( words.trim() === search ) {
+			return;
+		}
+		const timer = setTimeout( () => onSearch( words.trim() ), 300 );
+		return () => clearTimeout( timer );
+	}, [ words, search, onSearch ] );
+
+	// New filters or a new search start again from the first page.
+	useEffect( () => setPage( 1 ), [ query, search ] );
 
 	useEffect( () => {
 		setFailed( '' );
 		api(
-			'/posts?days=' +
-				days +
+			'/posts?' +
+				query +
+				'&search=' +
+				encodeURIComponent( search ) +
 				'&orderby=' +
 				sort.orderby +
 				'&order=' +
@@ -80,7 +99,7 @@ export default function Posts( { range, days, extra, onOpen } ) {
 		)
 			.then( setTable )
 			.catch( ( e ) => setFailed( e.message || String( e ) ) );
-	}, [ days, sort, page ] );
+	}, [ query, search, sort, page ] );
 
 	// Text sorts from A and dates and numbers from the largest, the first time.
 	const onSort = ( orderby ) => {
@@ -102,7 +121,15 @@ export default function Posts( { range, days, extra, onOpen } ) {
 		body = (
 			<div className={ P + 'empty' }>
 				<p>
-					{ __( 'No published posts yet.', 'nhrrob-post-insights' ) }
+					{ search
+						? __(
+								'No post has these words in its title.',
+								'nhrrob-post-insights'
+						  )
+						: __(
+								'No published posts yet.',
+								'nhrrob-post-insights'
+						  ) }
 				</p>
 			</div>
 		);
@@ -236,6 +263,22 @@ export default function Posts( { range, days, extra, onOpen } ) {
 								count( table.total )
 						  )
 						: undefined
+				}
+				actions={
+					<input
+						type="search"
+						className={ P + 'input ' + P + 'input--inline' }
+						placeholder={ __(
+							'Search titles',
+							'nhrrob-post-insights'
+						) }
+						aria-label={ __(
+							'Search titles',
+							'nhrrob-post-insights'
+						) }
+						value={ words }
+						onChange={ ( e ) => setWords( e.target.value ) }
+					/>
 				}
 				flush
 			>

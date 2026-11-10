@@ -21,7 +21,7 @@ class RestTest extends TestCase {
 	public function test_posts_route_takes_days_sort_order_and_page() {
 		$args = Rest::posts_args();
 
-		$this->assertSame( [ 'days', 'orderby', 'order', 'page' ], array_keys( $args ) );
+		$this->assertSame( [ 'days', 'orderby', 'order', 'page', 'type', 'from', 'to', 'search' ], array_keys( $args ) );
 		$this->assertSame( 'absint', $args['days']['sanitize_callback'] );
 		$this->assertSame( [ 'title', 'date', 'views', 'average' ], $args['orderby']['enum'] );
 		$this->assertSame( 'views', $args['orderby']['default'] );
