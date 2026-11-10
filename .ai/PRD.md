@@ -24,7 +24,7 @@ Show a site owner how many readers each post gets, where they come from and how 
 - "No referrer" on Referrers and on one post: the views that came without a referring site.
 - The screen is under Tools → Post Insights, with a "View insights" link on the Plugins screen. The old address under Dashboard redirects there.
 
-## Next version
+## Version 0.4
 
 - Filters, free: the post type, a custom date range (from and to, at most about five years, ending today at the latest) and a title search on Posts. They sit in the one row above the numbers and narrow Overview, Posts, Referrers and one post alike, and they are kept in the address, so a filtered view can be bookmarked. An unknown value is ignored, not an error.
 
