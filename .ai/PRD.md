@@ -18,6 +18,10 @@ Show a site owner how many readers each post gets, where they come from and how 
 - "All time" as a range on every screen.
 - An add-on declares columns for Posts and tiles for Overview, and fills them; the app draws them by kind (number, time or text), so the add-on needs no script.
 
+## Version 0.3
+
+- The screen is under Tools → Post Insights, with a "View insights" link on the Plugins screen. The old address under Dashboard redirects there.
+
 ## Left out on purpose
 
 - **Unique visitors.** Telling two views apart needs something that identifies the visitor for a day, a hash of the address at least. Left until there is a way that keeps rule 1 of `CLAUDE.md`.
