@@ -4,7 +4,7 @@ Tags: analytics, statistics, post views, referrers, privacy
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.2.0
+Stable tag: 0.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -46,6 +46,12 @@ Visitors who block scripts are not counted, and neither are crawlers, your own v
 Its two tables and its one option.
 
 == Changelog ==
+
+= 0.3.0 =
+* The screen moved to Tools → Post Insights, with a "View insights" link on the Plugins screen. The old address under Dashboard redirects there.
+* One post: "Details" in the Posts table opens a post's views, average time, views per day and referring sites.
+* "No referrer" on Referrers and on one post counts the views that came without a referring site.
+* Sorting Posts by average time uses the whole range, not one day's row.
 
 = 0.2.0 =
 * Posts lists every published post, also those without a view, sortable by title, date, views and average time, 20 to a page, with a link to edit each.
