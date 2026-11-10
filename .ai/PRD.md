@@ -24,6 +24,10 @@ Show a site owner how many readers each post gets, where they come from and how 
 - "No referrer" on Referrers and on one post: the views that came without a referring site.
 - The screen is under Tools → Post Insights, with a "View insights" link on the Plugins screen. The old address under Dashboard redirects there.
 
+## Next version
+
+- Filters, free: the post type, a custom date range (from and to, at most about five years, ending today at the latest) and a title search on Posts. They sit in the one row above the numbers and narrow Overview, Posts, Referrers and one post alike, and they are kept in the address, so a filtered view can be bookmarked. An unknown value is ignored, not an error.
+
 ## Left out on purpose
 
 - **Unique visitors.** Telling two views apart needs something that identifies the visitor for a day, a hash of the address at least. Left until there is a way that keeps rule 1 of `CLAUDE.md`.
@@ -35,7 +39,7 @@ Show a site owner how many readers each post gets, where they come from and how 
 ## Candidates for a paid version
 
 - Unique visitors and returning readers, with a daily rotating hash.
-- Views per category, tag, author and series; countries; devices.
+- Views per category, tag, author and series, as filters next to the free ones; countries; devices.
 - Scroll depth and "read to the end".
 - A view count block for the front end, and a "most read" block.
 - A weekly email, and export as CSV.

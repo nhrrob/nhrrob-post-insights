@@ -103,6 +103,26 @@ class Admin {
 	}
 
 	/**
+	 * The post types the app can be narrowed to, with their names, for the
+	 * type filter.
+	 *
+	 * @return array Rows with name and label.
+	 */
+	private static function types() {
+		$types = [];
+
+		foreach ( Filters::types() as $name ) {
+			$object  = get_post_type_object( $name );
+			$types[] = [
+				'name'  => $name,
+				'label' => $object ? (string) $object->labels->name : $name,
+			];
+		}
+
+		return $types;
+	}
+
+	/**
 	 * Enqueue the app on its own screen only.
 	 *
 	 * @param string $hook Hook suffix of the current screen.
@@ -130,6 +150,8 @@ class Admin {
 				'pluginName' => __( 'Post Insights', 'nhrrob-post-insights' ),
 				'version'    => NHRROB_POST_INSIGHTS_VERSION,
 				'extra'      => Columns::get(),
+				'types'      => self::types(),
+				'today'      => current_time( 'Y-m-d' ),
 			]
 		);
 

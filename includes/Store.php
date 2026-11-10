@@ -85,23 +85,25 @@ class Store {
 	}
 
 	/**
-	 * Everything the dashboard shows for the last days, today included, for
-	 * the whole site or one post.
+	 * Everything the dashboard shows for the last days, today included, or
+	 * for a custom range, for the whole site or one post.
 	 *
-	 * @param int $days Number of days, or 0 for all time.
-	 * @param int $post Post ID, or 0 for every post.
+	 * @param int   $days    Number of days, or 0 for all time.
+	 * @param int   $post    Post ID, or 0 for every post.
+	 * @param array $filters Any of type, from and to; see Filters.
 	 * @return array
 	 */
-	public static function stats( $days, $post = 0 ) {
+	public static function stats( $days, $post = 0, $filters = [] ) {
 		global $wpdb;
 
-		$asked = (int) $days;
-		$post  = (int) $post;
-		$from  = self::from( $days );
-		$days  = (int) round( ( strtotime( current_time( 'Y-m-d' ) ) - strtotime( $from ) ) / DAY_IN_SECONDS ) + 1;
-		$where = $post ? $wpdb->prepare( 'day >= %s AND post_id = %d', $from, $post ) : $wpdb->prepare( 'day >= %s', $from );
+		$asked   = (int) $days;
+		$post    = (int) $post;
+		$filters = Filters::resolve( $days, $filters );
+		$from    = $filters['from'];
+		$days    = (int) round( ( strtotime( $filters['to'] ) - strtotime( $from ) ) / DAY_IN_SECONDS ) + 1;
+		$where   = Filters::where( $filters, $post );
 
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- read from the plugin's own tables for one dashboard request; $where is prepared above.
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- read from the plugin's own tables for one dashboard request; $where is prepared in Filters::where().
 		$by_day    = $wpdb->get_results( $wpdb->prepare( "SELECT day, SUM(views) AS views, SUM(seconds) AS seconds FROM %i WHERE $where GROUP BY day", Installer::daily_table() ), OBJECT_K );
 		$posts     = $wpdb->get_results( $wpdb->prepare( "SELECT post_id, SUM(views) AS views, SUM(seconds) AS seconds FROM %i WHERE $where GROUP BY post_id ORDER BY views DESC, post_id DESC LIMIT 50", Installer::daily_table() ) );
 		$referrers = $wpdb->get_results( $wpdb->prepare( "SELECT host, SUM(views) AS views FROM %i WHERE $where GROUP BY host ORDER BY views DESC, host ASC LIMIT 50", Installer::referrers_table() ) );
@@ -146,11 +148,12 @@ class Store {
 		/**
 		 * The numbers the dashboard shows.
 		 *
-		 * @param array $stats Days, totals, posts and referrers.
-		 * @param int   $days  Number of days asked for, 0 for all time.
-		 * @param int   $post  Post ID, or 0 for the whole site.
+		 * @param array $stats   Days, totals, posts and referrers.
+		 * @param int   $days    Number of days asked for, 0 for all time.
+		 * @param int   $post    Post ID, or 0 for the whole site.
+		 * @param array $filters The first and last day (`from`, `to`, Y-m-d) and the post `type` (empty for every type).
 		 */
-		return (array) apply_filters( 'nhrrob_post_insights_stats', $stats, $asked, $post );
+		return (array) apply_filters( 'nhrrob_post_insights_stats', $stats, $asked, $post, $filters );
 	}
 
 	/**
@@ -211,27 +214,34 @@ class Store {
 	 * @param string $orderby A key of ORDERBY.
 	 * @param string $order   asc or desc.
 	 * @param int    $page    Page, from 1.
+	 * @param array  $filters Any of type, from, to and search; see Filters.
 	 * @return array Rows, total and pages.
 	 */
-	public static function posts( $days, $orderby = 'views', $order = 'desc', $page = 1 ) {
+	public static function posts( $days, $orderby = 'views', $order = 'desc', $page = 1, $filters = [] ) {
 		global $wpdb;
 
-		$types = array_values( array_filter( get_post_types(), 'is_post_type_viewable' ) );
-		$sort  = isset( self::ORDERBY[ $orderby ] ) ? self::ORDERBY[ $orderby ] : self::ORDERBY['views'];
-		$dir   = 'asc' === $order ? 'ASC' : 'DESC';
-		$page  = max( 1, (int) $page );
-		$in    = implode( ', ', array_fill( 0, count( $types ), '%s' ) );
-		$where = $wpdb->prepare( "p.post_status = 'publish' AND p.post_password = '' AND p.post_type IN ($in)", $types ); // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- one %s per post type.
+		$filters = Filters::resolve( $days, $filters );
+		$types   = '' !== $filters['type'] ? [ $filters['type'] ] : array_values( array_filter( get_post_types(), 'is_post_type_viewable' ) );
+		$sort    = isset( self::ORDERBY[ $orderby ] ) ? self::ORDERBY[ $orderby ] : self::ORDERBY['views'];
+		$dir     = 'asc' === $order ? 'ASC' : 'DESC';
+		$page    = max( 1, (int) $page );
+		$in      = implode( ', ', array_fill( 0, count( $types ), '%s' ) );
+		$where   = $wpdb->prepare( "p.post_status = 'publish' AND p.post_password = '' AND p.post_type IN ($in)", $types ); // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- one %s per post type.
+
+		if ( '' !== $filters['search'] ) {
+			$where .= $wpdb->prepare( ' AND p.post_title LIKE %s', '%' . $wpdb->esc_like( $filters['search'] ) . '%' );
+		}
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $where is prepared above; $sort and $dir come from fixed lists.
 		$total = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->posts} p WHERE $where" );
 		$rows  = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT p.ID AS id, p.post_date AS date, COALESCE(SUM(d.views), 0) AS views, COALESCE(SUM(d.seconds), 0) AS seconds
-				FROM {$wpdb->posts} p LEFT JOIN %i d ON d.post_id = p.ID AND d.day >= %s
+				FROM {$wpdb->posts} p LEFT JOIN %i d ON d.post_id = p.ID AND d.day BETWEEN %s AND %s
 				WHERE $where GROUP BY p.ID ORDER BY $sort $dir, p.ID DESC LIMIT %d OFFSET %d",
 				Installer::daily_table(),
-				self::from( $days ),
+				$filters['from'],
+				$filters['to'],
 				self::PER_PAGE,
 				( $page - 1 ) * self::PER_PAGE
 			)
@@ -260,10 +270,11 @@ class Store {
 		 * The rows of one page of the posts table. An add-on fills a declared
 		 * column in each row's `extra`, by the column's key.
 		 *
-		 * @param array $posts Rows: id, title, link, edit, date, views, seconds, extra.
-		 * @param int   $days  Number of days, or 0 for all time.
+		 * @param array $posts   Rows: id, title, link, edit, date, views, seconds, extra.
+		 * @param int   $days    Number of days, or 0 for all time.
+		 * @param array $filters The first and last day (`from`, `to`, Y-m-d), the post `type` and the title `search`.
 		 */
-		$posts = (array) apply_filters( 'nhrrob_post_insights_posts', $posts, (int) $days );
+		$posts = (array) apply_filters( 'nhrrob_post_insights_posts', $posts, (int) $days, $filters );
 
 		return [
 			'posts' => array_values( $posts ),

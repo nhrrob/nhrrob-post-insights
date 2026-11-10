@@ -100,7 +100,7 @@ class Rest {
 						'default'           => 0,
 						'sanitize_callback' => 'absint',
 					],
-				],
+				] + Filters::args(),
 			]
 		);
 	}
@@ -133,7 +133,7 @@ class Rest {
 				'sanitize_callback' => 'absint',
 				'minimum'           => 1,
 			],
-		];
+		] + Filters::args( true );
 	}
 
 	/**
@@ -196,7 +196,7 @@ class Rest {
 	 * @return \WP_REST_Response
 	 */
 	public function stats( $request ) {
-		return rest_ensure_response( Store::stats( $request['days'], $request['post'] ) );
+		return rest_ensure_response( Store::stats( $request['days'], $request['post'], self::filters( $request ) ) );
 	}
 
 	/**
@@ -206,6 +206,21 @@ class Rest {
 	 * @return \WP_REST_Response
 	 */
 	public function posts( $request ) {
-		return rest_ensure_response( Store::posts( $request['days'], $request['orderby'], $request['order'], $request['page'] ) );
+		return rest_ensure_response( Store::posts( $request['days'], $request['orderby'], $request['order'], $request['page'], self::filters( $request ) ) );
+	}
+
+	/**
+	 * The filters of a request, as sanitized by their arguments.
+	 *
+	 * @param \WP_REST_Request $request Request.
+	 * @return array
+	 */
+	private static function filters( $request ) {
+		return [
+			'type'   => (string) $request['type'],
+			'from'   => (string) $request['from'],
+			'to'     => (string) $request['to'],
+			'search' => (string) $request['search'],
+		];
 	}
 }
