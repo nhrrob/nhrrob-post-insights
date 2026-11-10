@@ -30,17 +30,25 @@ Show a site owner how many readers each post gets, where they come from and how 
 
 ## Left out on purpose
 
-- **Unique visitors.** Telling two views apart needs something that identifies the visitor for a day, a hash of the address at least. Left until there is a way that keeps rule 1 of `CLAUDE.md`.
-- **Numbers shown to readers.** A view count on the post itself. The data is there; it is a display question.
+- **Unique visitors.** Telling two views apart needs something that identifies the visitor for a day, a hash of the address at least. Left until there is a way that keeps rule 1 of `CLAUDE.md`; #4 decides (see below).
 - **A settings screen.** Nothing needs a setting yet.
 - **Protection against a script inflating a counter.** The open routes only add to counters of public posts. A rate limit would need an identifier per visitor.
 - **Deleting old rows.** One row per post per day stays small for years.
 
-## Candidates for a paid version
+## Free, once there is time (moved from the paid list on 2026-11-10)
 
-- Unique visitors and returning readers, with a daily rotating hash.
-- Views per category, tag, author and series, as filters next to the free ones; countries; devices.
-- Scroll depth and "read to the end".
-- A view count block for the front end, and a "most read" block.
-- A weekly email, and export as CSV.
-- Campaign links (`utm_*`) and goals.
+Each of these is free in another WordPress plugin, so under rule 1 of the Pro PRD it cannot be paid. Not planned in a version yet; listed so nothing is sold that others give away. The market check is [the Pro repo's `docs/market.md`](https://github.com/nhrrob/nhrrob-post-insights-pro/blob/main/docs/market.md).
+
+- **Category, tag and author filters**, next to the post type (free in Independent Analytics and WP Statistics). This reverses the call on #6.
+- **A view count block and a "most read" block** (free in Koko, Post Views Counter, Top 10).
+- **"Read to the end"**: how many views reached the end of the post, counted in the browser (free in Semantic Journey).
+- **Export as CSV** of what a screen shows (free in Independent Analytics, WP Statistics).
+- **A weekly email** of the week's numbers (free in Post Views Counter, Burst).
+- **Campaign links**: views by `utm_source` and `utm_campaign`, read from the address in the browser (free in SlimStat, WP Statistics).
+- **Devices**: phone, tablet or desktop from the screen width in the browser, never the user agent (free in Independent Analytics, Burst).
+- **Countries** only if it can be done on the site without a GeoIP download (rule 2). Free in Independent Analytics, Burst and others, so it is never paid.
+- **Readers, not only views**: free in Koko, Independent Analytics, Burst, WP Statistics and SlimStat, so it is free or not done at all. Decided on #4.
+
+## Paid version
+
+Every Pro document lives in [nhrrob/nhrrob-post-insights-pro](https://github.com/nhrrob/nhrrob-post-insights-pro) `docs/`: the [Pro PRD](https://github.com/nhrrob/nhrrob-post-insights-pro/blob/main/docs/PRD.md) (what the add-on may carry: Reading Map and Read Next), its decisions and its to-do.

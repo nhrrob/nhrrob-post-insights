@@ -2,7 +2,7 @@
 
 Slug `nhrrob-post-insights` · display name "NHR Post Insights" · menu label **Post Insights** (Tools → Post Insights; never "NHR" in the UI).
 
-Private repository, version 0.x, not on WordPress.org. `.ai/PRD.md` holds the scope, what was left out on purpose and the candidates for a paid version: read it before proposing a feature.
+Private repository, version 0.x, not on WordPress.org. `.ai/PRD.md` holds the scope and what was left out on purpose, and the Pro repo's `docs/PRD.md` (nhrrob/nhrrob-post-insights-pro) what a paid add-on may carry: read them before proposing a feature.
 
 ## Rules that are specific to this plugin
 
@@ -52,7 +52,7 @@ A day is the site's own date (`current_time()`). Average time is `seconds / view
 
 - `POST /view`: `post`, `referrer` → `204`. Counts one view today, and the referring host when it is another site.
 - `POST /time`: `post`, `seconds` → `204`. Adds seconds, at most `Visit::MAX_SECONDS` per request.
-- Filters, on both GET routes: `type` (a public post type that is counted, empty for all), `from` and `to` (Y-m-d; a custom range used only when both are given and in order, ending today at the latest and spanning at most `Filters::MAX_DAYS`, otherwise `days` applies). On `/posts` also `search` (words in the title, at most 100 characters). An unknown value is ignored, never an error. Category, tag and author filters are left for a paid version (`.ai/PRD.md`).
+- Filters, on both GET routes: `type` (a public post type that is counted, empty for all), `from` and `to` (Y-m-d; a custom range used only when both are given and in order, ending today at the latest and spanning at most `Filters::MAX_DAYS`, otherwise `days` applies). On `/posts` also `search` (words in the title, at most 100 characters). An unknown value is ignored, never an error. Category, tag and author filters are planned as free (`.ai/PRD.md`).
 - `GET /stats?days=30&post=0`: `days` (each with `day`, `views`, `seconds`, empty days included), `views`, `seconds`, `direct` (views with no referrer: the views less the referred views, never below zero), `posts` (top 50), `referrers` (top 50). `days=0` is all time, from the first day with a view. `post` narrows every number to one post; 0 is the whole site.
 - `GET /posts?days=30&orderby=views&order=desc&page=1`: one page (`Store::PER_PAGE`, 20) of every published, public post, also those without a view: `posts` (each with `id`, `title`, `link`, `edit`, `date`, `views`, `seconds`, `extra`), `total`, `pages`. `orderby` is `title`, `date`, `views` or `average`. Behind `Rest::can_view()`.
 
