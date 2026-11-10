@@ -20,6 +20,8 @@ Show a site owner how many readers each post gets, where they come from and how 
 
 ## Version 0.3
 
+- One post: "Details" in the Posts table opens its views, average time, views per day and referring sites, for the chosen days.
+- "No referrer" on Referrers and on one post: the views that came without a referring site.
 - The screen is under Tools → Post Insights, with a "View insights" link on the Plugins screen. The old address under Dashboard redirects there.
 
 ## Left out on purpose

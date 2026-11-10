@@ -9,6 +9,7 @@ import AppShell from './components/AppShell';
 import { ToastProvider } from './components/ToastProvider';
 import { Button, Loading, Note } from './components/ui';
 import Overview from './screens/Overview';
+import Post from './screens/Post';
 import Posts from './screens/Posts';
 import Referrers from './screens/Referrers';
 
@@ -19,22 +20,25 @@ const RANGES = [ 7, 30, 90, 0 ];
 export default function App( { boot } ) {
 	const [ active, setActive ] = useState( 'overview' );
 	const [ days, setDays ] = useState( 30 );
+	// The post opened from the Posts table, or null for the whole site.
+	const [ post, setPost ] = useState( null );
 	const [ data, setData ] = useState( null );
 	const [ failed, setFailed ] = useState( '' );
 
 	useEffect( () => {
 		setFailed( '' );
-		api( '/stats?days=' + days )
+		setData( null );
+		api( '/stats?days=' + days + ( post ? '&post=' + post.id : '' ) )
 			.then( setData )
 			.catch( ( e ) => setFailed( e.message || String( e ) ) );
-	}, [ days ] );
+	}, [ days, post ] );
 
 	const modules = [
 		{ id: 'overview', label: __( 'Overview', 'nhrrob-post-insights' ) },
 		{ id: 'posts', label: __( 'Posts', 'nhrrob-post-insights' ) },
 		{ id: 'referrers', label: __( 'Referrers', 'nhrrob-post-insights' ) },
 	];
-	const Screen = SCREENS[ active ];
+	const Screen = post ? Post : SCREENS[ active ];
 
 	// One row of filters above the numbers, the same on every screen.
 	const range = (
@@ -73,6 +77,9 @@ export default function App( { boot } ) {
 				range={ range }
 				days={ days }
 				extra={ boot.extra || {} }
+				post={ post }
+				onOpen={ setPost }
+				onClose={ () => setPost( null ) }
 			/>
 		);
 	}
@@ -82,7 +89,10 @@ export default function App( { boot } ) {
 			<AppShell
 				modules={ modules }
 				active={ active }
-				onNavigate={ setActive }
+				onNavigate={ ( id ) => {
+					setPost( null );
+					setActive( id );
+				} }
 				title={
 					boot.pluginName ||
 					__( 'Post Insights', 'nhrrob-post-insights' )

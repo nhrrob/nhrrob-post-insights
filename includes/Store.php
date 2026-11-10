@@ -85,46 +85,44 @@ class Store {
 	}
 
 	/**
-	 * Everything the dashboard shows for the last days, today included.
+	 * Everything the dashboard shows for the last days, today included, for
+	 * the whole site or one post.
 	 *
 	 * @param int $days Number of days, or 0 for all time.
+	 * @param int $post Post ID, or 0 for every post.
 	 * @return array
 	 */
-	public static function stats( $days ) {
+	public static function stats( $days, $post = 0 ) {
 		global $wpdb;
 
 		$asked = (int) $days;
+		$post  = (int) $post;
 		$from  = self::from( $days );
 		$days  = (int) round( ( strtotime( current_time( 'Y-m-d' ) ) - strtotime( $from ) ) / DAY_IN_SECONDS ) + 1;
+		$where = $post ? $wpdb->prepare( 'day >= %s AND post_id = %d', $from, $post ) : $wpdb->prepare( 'day >= %s', $from );
 
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery -- read from the plugin's own tables for one dashboard request.
-		$by_day    = $wpdb->get_results( $wpdb->prepare( 'SELECT day, SUM(views) AS views, SUM(seconds) AS seconds FROM %i WHERE day >= %s GROUP BY day', Installer::daily_table(), $from ), OBJECT_K );
-		$posts     = $wpdb->get_results( $wpdb->prepare( 'SELECT post_id, SUM(views) AS views, SUM(seconds) AS seconds FROM %i WHERE day >= %s GROUP BY post_id ORDER BY views DESC, post_id DESC LIMIT 50', Installer::daily_table(), $from ) );
-		$referrers = $wpdb->get_results( $wpdb->prepare( 'SELECT host, SUM(views) AS views FROM %i WHERE day >= %s GROUP BY host ORDER BY views DESC, host ASC LIMIT 50', Installer::referrers_table(), $from ) );
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- read from the plugin's own tables for one dashboard request; $where is prepared above.
+		$by_day    = $wpdb->get_results( $wpdb->prepare( "SELECT day, SUM(views) AS views, SUM(seconds) AS seconds FROM %i WHERE $where GROUP BY day", Installer::daily_table() ), OBJECT_K );
+		$posts     = $wpdb->get_results( $wpdb->prepare( "SELECT post_id, SUM(views) AS views, SUM(seconds) AS seconds FROM %i WHERE $where GROUP BY post_id ORDER BY views DESC, post_id DESC LIMIT 50", Installer::daily_table() ) );
+		$referrers = $wpdb->get_results( $wpdb->prepare( "SELECT host, SUM(views) AS views FROM %i WHERE $where GROUP BY host ORDER BY views DESC, host ASC LIMIT 50", Installer::referrers_table() ) );
+		$referred  = (int) $wpdb->get_var( $wpdb->prepare( "SELECT SUM(views) FROM %i WHERE $where", Installer::referrers_table() ) );
 		// phpcs:enable
 
 		$stats = [
-			'days'      => [],
+			'days'      => self::days( $from, $days, $by_day ),
 			'views'     => 0,
 			'seconds'   => 0,
+			'direct'    => 0,
 			'posts'     => [],
 			'referrers' => [],
 		];
 
-		// A day without a view has no row, and still belongs in the chart.
-		for ( $offset = 0; $offset < $days; $offset++ ) {
-			$day     = gmdate( 'Y-m-d', strtotime( $from . ' +' . $offset . ' days' ) );
-			$views   = isset( $by_day[ $day ] ) ? (int) $by_day[ $day ]->views : 0;
-			$seconds = isset( $by_day[ $day ] ) ? (int) $by_day[ $day ]->seconds : 0;
-
-			$stats['days'][]   = [
-				'day'     => $day,
-				'views'   => $views,
-				'seconds' => $seconds,
-			];
-			$stats['views']   += $views;
-			$stats['seconds'] += $seconds;
+		foreach ( $stats['days'] as $day ) {
+			$stats['views']   += $day['views'];
+			$stats['seconds'] += $day['seconds'];
 		}
+
+		$stats['direct'] = self::direct( $stats['views'], $referred );
 
 		foreach ( $posts as $row ) {
 			$title = get_the_title( (int) $row->post_id );
@@ -150,8 +148,45 @@ class Store {
 		 *
 		 * @param array $stats Days, totals, posts and referrers.
 		 * @param int   $days  Number of days asked for, 0 for all time.
+		 * @param int   $post  Post ID, or 0 for the whole site.
 		 */
-		return (array) apply_filters( 'nhrrob_post_insights_stats', $stats, $asked );
+		return (array) apply_filters( 'nhrrob_post_insights_stats', $stats, $asked, $post );
+	}
+
+	/**
+	 * Every day of a range with its views and seconds. A day without a view
+	 * has no row, and still belongs in the chart, as zero.
+	 *
+	 * @param string $from   First day, Y-m-d.
+	 * @param int    $count  Number of days.
+	 * @param array  $by_day Rows keyed by day, each with views and seconds.
+	 * @return array
+	 */
+	public static function days( $from, $count, $by_day ) {
+		$days = [];
+
+		for ( $offset = 0; $offset < $count; $offset++ ) {
+			$day    = gmdate( 'Y-m-d', strtotime( $from . ' +' . $offset . ' days' ) );
+			$days[] = [
+				'day'     => $day,
+				'views'   => isset( $by_day[ $day ] ) ? (int) $by_day[ $day ]->views : 0,
+				'seconds' => isset( $by_day[ $day ] ) ? (int) $by_day[ $day ]->seconds : 0,
+			];
+		}
+
+		return $days;
+	}
+
+	/**
+	 * Views with no referrer, such as a typed address or a link in an app:
+	 * the views less the referred views of the same days, never below zero.
+	 *
+	 * @param int $views    Views.
+	 * @param int $referred Views with a referring site.
+	 * @return int
+	 */
+	public static function direct( $views, $referred ) {
+		return max( 0, (int) $views - (int) $referred );
 	}
 
 	/**

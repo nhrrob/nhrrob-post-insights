@@ -29,7 +29,7 @@ includes/
   Columns.php      the columns and tiles an add-on declares
   Admin.php        Tools → Post Insights: mount point, enqueue, boot data, Plugins row link, old address redirect
 assets/tracker.js  reports the view and the time in view; plain script, not built
-admin/src/         React source: index.js, app.js, api.js, format.js, components/ (AppShell, ui, DayChart, toasts), screens/ (Overview, Posts, Referrers), style.scss
+admin/src/         React source: index.js, app.js, api.js, format.js, components/ (AppShell, ui, DayChart, toasts), screens/ (Overview, Posts, Post, Referrers), style.scss
 admin/build/       compiled output (committed, ships)
 tests/             PHPUnit + WP_Mock
 .github/workflows/php.yml   PHPCS, then per PHP version: syntax, unit tests, smoke test
@@ -51,7 +51,7 @@ A day is the site's own date (`current_time()`). Average time is `seconds / view
 
 - `POST /view`: `post`, `referrer` → `204`. Counts one view today, and the referring host when it is another site.
 - `POST /time`: `post`, `seconds` → `204`. Adds seconds, at most `Visit::MAX_SECONDS` per request.
-- `GET /stats?days=30`: `days` (each with `day`, `views`, `seconds`, empty days included), `views`, `seconds`, `posts` (top 50), `referrers` (top 50). `days=0` is all time, from the first day with a view.
+- `GET /stats?days=30&post=0`: `days` (each with `day`, `views`, `seconds`, empty days included), `views`, `seconds`, `direct` (views with no referrer: the views less the referred views, never below zero), `posts` (top 50), `referrers` (top 50). `days=0` is all time, from the first day with a view. `post` narrows every number to one post; 0 is the whole site.
 - `GET /posts?days=30&orderby=views&order=desc&page=1`: one page (`Store::PER_PAGE`, 20) of every published, public post, also those without a view: `posts` (each with `id`, `title`, `link`, `edit`, `date`, `views`, `seconds`, `extra`), `total`, `pages`. `orderby` is `title`, `date`, `views` or `average`. Behind `Rest::can_view()`.
 
 ## Hooks for an add-on
@@ -59,7 +59,7 @@ A day is the site's own date (`current_time()`). Average time is `seconds / view
 - filter `nhrrob_post_insights_capability`: who may see the numbers.
 - filter `nhrrob_post_insights_counts`: whether views of a post are counted.
 - action `nhrrob_post_insights_view`: after a view was counted, with the post ID and the referring host.
-- filter `nhrrob_post_insights_stats`: the numbers before they go to the app. An add-on's tile values go in `extra`, by key.
+- filter `nhrrob_post_insights_stats`: the numbers before they go to the app, with the days and the post (0 for the whole site). An add-on's tile values go in `extra`, by key; one post's screen shows no add-on tiles.
 - filter `nhrrob_post_insights_columns`: `[ 'columns' => [...], 'tiles' => [...] ]`, each entry `key`, `label`, `kind` (`number`, `time` in seconds, or `text`). `Columns::get()` drops a malformed entry and passes the rest to the app as `nhrrobPostInsightsApp.extra`.
 - filter `nhrrob_post_insights_posts`: the rows of one page of `GET /posts`, with the days; fill a declared column in each row's `extra`, by key. Only that page's rows, so an add-on never loads every post.
 

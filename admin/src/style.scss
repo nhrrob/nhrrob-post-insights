@@ -790,6 +790,11 @@ html:has(.#{$p}-app[data-theme='dark']) #wpfooter {
 
 .#{$p}-edit {
 	margin-left: 10px;
+	padding: 0;
+	border: 0;
+	background: none;
+	font-family: inherit;
+	cursor: pointer;
 	color: var(--ir-muted);
 	font-size: 12px;
 
