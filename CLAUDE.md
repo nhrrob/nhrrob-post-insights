@@ -1,6 +1,6 @@
 # NHR Post Insights — project notes
 
-Slug `nhrrob-post-insights` · display name "NHR Post Insights" · menu label **Post Insights** (Dashboard → Post Insights; never "NHR" in the UI).
+Slug `nhrrob-post-insights` · display name "NHR Post Insights" · menu label **Post Insights** (Tools → Post Insights; never "NHR" in the UI).
 
 Private repository, version 0.x, not on WordPress.org. `.ai/PRD.md` holds the scope, what was left out on purpose and the candidates for a paid version: read it before proposing a feature.
 
@@ -27,7 +27,7 @@ includes/
   Tracker.php      enqueues assets/tracker.js on a single post or page, for visitors
   Rest.php         POST /view and /time (open), GET /stats and /posts (gated)
   Columns.php      the columns and tiles an add-on declares
-  Admin.php        Dashboard → Post Insights: mount point, enqueue, boot data
+  Admin.php        Tools → Post Insights: mount point, enqueue, boot data, Plugins row link, old address redirect
 assets/tracker.js  reports the view and the time in view; plain script, not built
 admin/src/         React source: index.js, app.js, api.js, format.js, components/ (AppShell, ui, DayChart, toasts), screens/ (Overview, Posts, Post, Referrers), style.scss
 admin/build/       compiled output (committed, ships)

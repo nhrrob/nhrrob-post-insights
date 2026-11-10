@@ -14,7 +14,7 @@ How many readers each post gets, where they come from and how long they stay. No
 NHR Post Insights counts the views of your posts and pages and shows them in the dashboard. It sets no cookie, stores nothing in the visitor's browser and sends nothing to another service.
 
 ### What it shows
-- **Dashboard → Post Insights** has three screens, each for the last 7, 30 or 90 days, or all time.
+- **Tools → Post Insights** has three screens, each for the last 7, 30 or 90 days, or all time.
 - **Overview**: views, the average time on a post, and a chart of views per day.
 - **Posts**: every published post with its views and average time, sortable by title, date, views or average time.
 - **Referrers**: the sites readers followed a link from.

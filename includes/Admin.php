@@ -1,6 +1,6 @@
 <?php
 /**
- * The dashboard screen: Dashboard → Post Insights.
+ * The dashboard screen: Tools → Post Insights.
  *
  * @package NHRRob\PostInsights
  */
@@ -34,18 +34,55 @@ class Admin {
 	 */
 	public function init() {
 		add_action( 'admin_menu', [ $this, 'menu' ] );
+		add_action( 'admin_menu', [ $this, 'redirect_old_address' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue' ] );
+		add_filter( 'plugin_action_links_' . plugin_basename( NHRROB_POST_INSIGHTS_FILE ), [ $this, 'action_links' ] );
 	}
 
 	/**
-	 * Add the screen under Dashboard.
+	 * Add the screen under Tools.
 	 *
 	 * @return void
 	 */
 	public function menu() {
 		/** This filter is documented in includes/Rest.php */
 		$capability = (string) apply_filters( 'nhrrob_post_insights_capability', 'manage_options' );
-		$this->hook = add_dashboard_page( __( 'Post Insights', 'nhrrob-post-insights' ), __( 'Post Insights', 'nhrrob-post-insights' ), $capability, self::SLUG, [ $this, 'render' ] );
+		$this->hook = add_management_page( __( 'Post Insights', 'nhrrob-post-insights' ), __( 'Post Insights', 'nhrrob-post-insights' ), $capability, self::SLUG, [ $this, 'render' ] );
+	}
+
+	/**
+	 * Send the screen's old address under Dashboard to Tools, so a bookmark
+	 * still works. Runs on admin_menu, before core refuses the unknown page.
+	 *
+	 * @return void
+	 */
+	public function redirect_old_address() {
+		global $pagenow;
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- only compared, never stored.
+		if ( 'index.php' !== $pagenow || ! isset( $_GET['page'] ) || self::SLUG !== sanitize_key( wp_unslash( $_GET['page'] ) ) ) {
+			return;
+		}
+
+		wp_safe_redirect( admin_url( 'tools.php?page=' . self::SLUG ) );
+		exit;
+	}
+
+	/**
+	 * A "View insights" link on the plugin's row of the Plugins screen, for
+	 * whoever may see the numbers.
+	 *
+	 * @param array $links Action links.
+	 * @return array
+	 */
+	public function action_links( $links ) {
+		if ( ! Rest::can_view() ) {
+			return $links;
+		}
+
+		array_unshift( $links, sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'tools.php?page=' . self::SLUG ) ), esc_html__( 'View insights', 'nhrrob-post-insights' ) ) );
+
+		return $links;
 	}
 
 	/**

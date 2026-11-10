@@ -196,7 +196,9 @@ class Store {
 		'title'   => 'p.post_title',
 		'date'    => 'p.post_date',
 		'views'   => 'views',
-		'average' => 'CASE WHEN views > 0 THEN seconds / views ELSE 0 END',
+		// The sums, not the aliases: inside an expression MySQL reads `views` and
+		// `seconds` as the columns of one row of the daily table.
+		'average' => 'CASE WHEN SUM(d.views) > 0 THEN SUM(d.seconds) / SUM(d.views) ELSE 0 END',
 	];
 
 	const PER_PAGE = 20;
