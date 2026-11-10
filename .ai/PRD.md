@@ -37,7 +37,7 @@ Show a site owner how many readers each post gets, where they come from and how 
 
 ## Free, once there is time (moved from the paid list on 2026-11-10)
 
-Each of these is free in another WordPress plugin, so under rule 1 of `.ai/PRD-PRO.md` it cannot be paid. Not planned in a version yet; listed so nothing is sold that others give away. The market check is `nazmulrobin_products/docs/market/post-insights.md`.
+Each of these is free in another WordPress plugin, so under rule 1 of the Pro PRD it cannot be paid. Not planned in a version yet; listed so nothing is sold that others give away. The market check is [the Pro repo's `docs/market.md`](https://github.com/nhrrob/nhrrob-post-insights-pro/blob/main/docs/market.md).
 
 - **Category, tag and author filters**, next to the post type (free in Independent Analytics and WP Statistics). This reverses the call on #6.
 - **A view count block and a "most read" block** (free in Koko, Post Views Counter, Top 10).
@@ -51,4 +51,4 @@ Each of these is free in another WordPress plugin, so under rule 1 of `.ai/PRD-P
 
 ## Paid version
 
-`.ai/PRD-PRO.md`: what the add-on may carry, and the two candidates that survived the market check, Reading Map and Read Next.
+Every Pro document lives in [nhrrob/nhrrob-post-insights-pro](https://github.com/nhrrob/nhrrob-post-insights-pro) `docs/`: the [Pro PRD](https://github.com/nhrrob/nhrrob-post-insights-pro/blob/main/docs/PRD.md) (what the add-on may carry: Reading Map and Read Next), its decisions and its to-do.
