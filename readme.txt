@@ -4,7 +4,7 @@ Tags: analytics, statistics, post views, referrers, privacy
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.3.0
+Stable tag: 0.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -47,6 +47,12 @@ Visitors who block scripts are not counted, and neither are crawlers, your own v
 Its two tables and its one option.
 
 == Changelog ==
+
+= 0.4.0 =
+* Filters on every screen: a custom range of days next to 7, 30, 90 days and all time, and the post type.
+* Posts has a search of the titles.
+* The filters are kept in the address, so a filtered view can be bookmarked.
+* The filters `nhrrob_post_insights_stats` and `nhrrob_post_insights_posts` pass the chosen range and type to an add-on.
 
 = 0.3.0 =
 * The screen moved to Tools → Post Insights, with a "View insights" link on the Plugins screen. The old address under Dashboard redirects there.
