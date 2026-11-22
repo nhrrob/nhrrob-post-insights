@@ -1,5 +1,5 @@
 /**
- * Shared building blocks: icons, panels, buttons, pills, fields and notes.
+ * Shared building blocks: icons, panels, headline numbers, ranked lists, buttons and notes.
  * Hand-rolled on purpose — no component or icon library enters the bundle.
  */
 const P = 'nhrrob-post-insights-';
@@ -23,9 +23,11 @@ const PATHS = {
 		'M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 01-1 1H5a1 1 0 01-1-1V7a1 1 0 011-1h5',
 	refresh: 'M20 11a8 8 0 00-14.9-3M4 5v3h3M4 13a8 8 0 0014.9 3M20 19v-3h-3',
 	overview: 'M4 20V10M10 20V4M16 20v-7M22 20H2',
-	posts: 'M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h7',
+	posts: 'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01',
 	referrers:
-		'M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1',
+		'M12 3a9 9 0 100 18 9 9 0 000-18zM3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18',
+	calendar:
+		'M5 4h14a2 2 0 012 2v13a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2zM3 9h18M8 2v4M16 2v4',
 };
 
 export function Icon( { name, size = 18, className = '' } ) {
@@ -56,15 +58,12 @@ export function ScreenHeader( { title, lede } ) {
 	);
 }
 
-export function Panel( { title, icon, meta, actions, flush, children } ) {
+export function Panel( { title, meta, actions, flush, foot, children } ) {
 	return (
 		<section className={ P + 'panel' }>
 			{ ( title || meta || actions ) && (
 				<header className={ P + 'panel__head' }>
-					<h2 className={ P + 'panel__title' }>
-						{ icon && <Icon name={ icon } /> }
-						{ title }
-					</h2>
+					<h2 className={ P + 'panel__title' }>{ title }</h2>
 					{ meta && (
 						<span className={ P + 'panel__meta' }>{ meta }</span>
 					) }
@@ -74,15 +73,79 @@ export function Panel( { title, icon, meta, actions, flush, children } ) {
 			<div className={ P + 'panel__body' + ( flush ? ' is-flush' : '' ) }>
 				{ children }
 			</div>
+			{ foot && <div className={ P + 'panel__foot' }>{ foot }</div> }
 		</section>
 	);
 }
 
-export function Pill( { tone = 'off', children } ) {
+/**
+ * A change against the days before, coloured by its direction.
+ *
+ * @param {Object}  props        Props.
+ * @param {Object}  props.change text and tone, from format's change(), or null.
+ * @param {boolean} props.dash   Whether to show a dash when there is no change, as in a table.
+ * @return {Object|null} The change.
+ */
+export function Change( { change, dash } ) {
+	if ( ! change ) {
+		return dash ? <span className={ P + 'change is-flat' }>–</span> : null;
+	}
+
 	return (
-		<span className={ P + 'pill ' + P + 'pill--' + tone }>
-			{ children }
+		<span className={ P + 'change is-' + change.tone }>
+			{ change.text }
 		</span>
+	);
+}
+
+/**
+ * One headline number: its label, the value and the change.
+ *
+ * @param {Object} props        Props.
+ * @param {string} props.label  What is counted.
+ * @param {string} props.value  The number, written.
+ * @param {Object} props.change text and tone, or null.
+ * @param {string} props.note   What it is compared with, or since when.
+ * @return {Object} Card.
+ */
+export function Kpi( { label, value, change, note } ) {
+	return (
+		<div className={ P + 'kpi' }>
+			<span className={ P + 'kpi__label' }>{ label }</span>
+			<span className={ P + 'kpi__value' }>{ value }</span>
+			<span className={ P + 'kpi__note' }>
+				<Change change={ change } /> { note }
+			</span>
+		</div>
+	);
+}
+
+/**
+ * A ranked list with a bar behind each row, as long as its share of the
+ * largest. Each row is a label (text or a control) and its number.
+ *
+ * @param {Object} props      Props.
+ * @param {Array}  props.rows Rows with key, label, value, and the number the bar is drawn from.
+ * @return {Object} List.
+ */
+export function BarList( { rows } ) {
+	const max = Math.max( 1, ...rows.map( ( row ) => row.amount ) );
+
+	return (
+		<ol className={ P + 'bars' }>
+			{ rows.map( ( row ) => (
+				<li key={ row.key } className={ P + 'bars__row' }>
+					<span
+						className={ P + 'bars__fill' }
+						style={ { width: ( row.amount / max ) * 100 + '%' } }
+						aria-hidden="true"
+					/>
+					<span className={ P + 'bars__label' }>{ row.label }</span>
+					{ row.aside }
+					<span className={ P + 'bars__value' }>{ row.value }</span>
+				</li>
+			) ) }
+		</ol>
 	);
 }
 
@@ -107,28 +170,6 @@ export function Button( {
 			}
 			{ ...props }
 		/>
-	);
-}
-
-/**
- * A labelled control with an optional help line under it.
- *
- * @param {Object} root0          Props.
- * @param {string} root0.id       Id of the control the label belongs to.
- * @param {string} root0.label    Label.
- * @param {string} root0.help     Explanation under the control.
- * @param {Object} root0.children The control.
- * @return {Object} Field element.
- */
-export function Field( { id, label, help, children } ) {
-	return (
-		<div className={ P + 'field' }>
-			<label className={ P + 'field__label' } htmlFor={ id }>
-				{ label }
-			</label>
-			{ children }
-			{ help && <p className={ P + 'field__help' }>{ help }</p> }
-		</div>
 	);
 }
 

@@ -1,5 +1,6 @@
 /**
- * App shell: gradient app bar, collapsible left nav and the content slot.
+ * App shell: the app bar with the theme switch, the left menu and the
+ * content. Below 782px the menu becomes a row above the content.
  */
 import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -7,7 +8,7 @@ import { __ } from '@wordpress/i18n';
 import { Icon } from './ui';
 
 const THEME_KEY = 'nhrrob-post-insights-theme';
-const NAV_KEY = 'nhrrob-post-insights-nav';
+const P = 'nhrrob-post-insights-';
 
 function remember( key, value ) {
 	try {
@@ -24,7 +25,6 @@ export default function AppShell( {
 	title,
 	children,
 } ) {
-	const [ collapsed, setCollapsed ] = useState( false );
 	const [ theme, setTheme ] = useState( '' ); // '' follows the system setting
 
 	useEffect( () => {
@@ -33,9 +33,6 @@ export default function AppShell( {
 			if ( saved === 'dark' || saved === 'light' ) {
 				setTheme( saved );
 			}
-			setCollapsed(
-				window.localStorage.getItem( NAV_KEY ) === 'collapsed'
-			);
 		} catch ( e ) {
 			/* storage unavailable */
 		}
@@ -47,42 +44,14 @@ export default function AppShell( {
 	const isDark = theme ? theme === 'dark' : prefersDark;
 
 	return (
-		<div
-			className={
-				'nhrrob-post-insights-app' +
-				( collapsed ? ' is-collapsed' : '' )
-			}
-			data-theme={ theme || undefined }
-		>
-			<header className="nhrrob-post-insights-bar">
+		<div className={ P + 'app' } data-theme={ theme || undefined }>
+			<header className={ P + 'bar' }>
+				<Icon name="overview" size={ 20 } />
+				<span className={ P + 'bar__title' }>{ title }</span>
+				<span className={ P + 'bar__spacer' } />
 				<button
 					type="button"
-					className="nhrrob-post-insights-bar__btn"
-					aria-label={
-						collapsed
-							? __( 'Expand menu', 'nhrrob-post-insights' )
-							: __( 'Collapse menu', 'nhrrob-post-insights' )
-					}
-					onClick={ () => {
-						remember(
-							NAV_KEY,
-							collapsed ? 'expanded' : 'collapsed'
-						);
-						setCollapsed( ! collapsed );
-					} }
-				>
-					<Icon name="menu" />
-				</button>
-				<span className="nhrrob-post-insights-bar__mark">
-					<Icon name="overview" />
-				</span>
-				<span className="nhrrob-post-insights-bar__title">
-					{ title }
-				</span>
-				<span className="nhrrob-post-insights-bar__spacer" />
-				<button
-					type="button"
-					className="nhrrob-post-insights-bar__btn"
+					className={ P + 'bar__btn' }
 					aria-label={
 						isDark
 							? __(
@@ -104,40 +73,34 @@ export default function AppShell( {
 				</button>
 			</header>
 
-			<div className="nhrrob-post-insights-body">
-				<nav className="nhrrob-post-insights-nav" aria-label={ title }>
+			<div className={ P + 'body' }>
+				<nav className={ P + 'nav' } aria-label={ title }>
 					{ modules.map( ( m ) => (
 						<button
 							key={ m.id }
 							type="button"
 							className={
-								'nhrrob-post-insights-nav__item' +
-								( m.id === active ? ' is-active' : '' ) +
-								( m.id === 'settings' ? ' is-last' : '' )
+								P +
+								'nav__item' +
+								( m.id === active ? ' is-active' : '' )
 							}
 							aria-current={
 								m.id === active ? 'page' : undefined
 							}
-							title={ m.label }
 							onClick={ () => onNavigate( m.id ) }
 						>
 							<Icon name={ m.id } />
-							<span className="nhrrob-post-insights-nav__label">
-								{ m.label }
-							</span>
-							{ m.count > 0 && (
-								<span className="nhrrob-post-insights-nav__count">
-									{ m.count }
-								</span>
-							) }
+							{ m.label }
 						</button>
 					) ) }
+					<p className={ P + 'nav__note' }>
+						{ __(
+							"No cookies, no visitor's address. Nothing leaves this site.",
+							'nhrrob-post-insights'
+						) }
+					</p>
 				</nav>
-				<main className="nhrrob-post-insights-content">
-					<div className="nhrrob-post-insights-screen">
-						{ children }
-					</div>
-				</main>
+				<main className={ P + 'content' }>{ children }</main>
 			</div>
 		</div>
 	);

@@ -1,48 +1,57 @@
 /**
- * One post: its totals, views per day and the sites its readers came from,
- * for the chosen days.
+ * One post: its headline numbers with their change, its views over time and
+ * where its readers came from, for the chosen days.
  */
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
-import DayChart from '../components/DayChart';
-import { Button, External, Panel, ScreenHeader } from '../components/ui';
-import { average, count } from '../format';
-import { Tile } from './Overview';
-import { ReferrerPanel } from './Referrers';
+import { External } from '../components/ui';
+import { dayLabel } from '../format';
+import { Kpis, ViewsPanel } from './Overview';
+import { SourcesPanel } from './Referrers';
 
 const P = 'nhrrob-post-insights-';
 
-export default function Post( { data, range, post, onClose } ) {
+export default function Post( { data, range, against, post, onClose } ) {
 	return (
 		<>
-			<Button small variant="ghost" onClick={ onClose }>
+			<button type="button" className={ P + 'back' } onClick={ onClose }>
 				{ __( '← All posts', 'nhrrob-post-insights' ) }
-			</Button>
-			<ScreenHeader
-				title={ post.title }
-				lede={ <External href={ post.link }>{ post.link }</External> }
-			/>
+			</button>
+			<div className={ P + 'screen__head is-post' }>
+				<h1 className={ P + 'screen__title' }>{ post.title }</h1>
+				<p className={ P + 'screen__lede' }>
+					{ post.date &&
+						sprintf(
+							/* translators: %s: the day a post was published. */
+							__( 'Published %s', 'nhrrob-post-insights' ),
+							dayLabel( 'M j, Y', post.date )
+						) + ' · ' }
+					<External href={ post.link }>
+						{ __( 'View post', 'nhrrob-post-insights' ) }
+					</External>
+					{ post.edit && (
+						<>
+							{ ' · ' }
+							<a href={ post.edit }>
+								{ __( 'Edit', 'nhrrob-post-insights' ) }
+							</a>
+						</>
+					) }
+				</p>
+			</div>
 			{ range }
-			<div className={ P + 'tiles' }>
-				<Tile
-					label={ __( 'Views', 'nhrrob-post-insights' ) }
-					value={ count( data.views ) }
-				/>
-				<Tile
-					label={ __( 'Average time', 'nhrrob-post-insights' ) }
-					value={ average( data.seconds, data.views ) }
+			<Kpis data={ data } against={ against } />
+			<div className={ P + 'two' }>
+				<ViewsPanel days={ data.days } />
+				<SourcesPanel
+					data={ data }
+					limit={ 10 }
+					title={ __(
+						'Where its readers came from',
+						'nhrrob-post-insights'
+					) }
 				/>
 			</div>
-			<Panel
-				title={ __( 'Views per day', 'nhrrob-post-insights' ) }
-				icon="overview"
-			>
-				<DayChart days={ data.days } />
-			</Panel>
-			<ReferrerPanel
-				referrers={ data.referrers }
-				direct={ data.direct || 0 }
-			/>
 		</>
 	);
 }

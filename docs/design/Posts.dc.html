@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Post Insights: Posts</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif; font-size: 14px; line-height: 1.5; color: {{c.ink}}; background: {{c.bg}}; min-height: 1300px; padding: 20px 16px; box-sizing: border-box">
+  <div style="max-width: 1320px; margin: 0 auto; border: 1px solid {{c.line}}; border-radius: 12px; overflow: hidden; background: {{c.app}}">
+
+    <header style="display: flex; align-items: center; gap: 10px; padding: 0 8px 0 16px; min-height: 56px; background: linear-gradient(135deg, {{c.gradA}} 0%, {{c.gradB}} 100%); color: #ffffff">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg>
+      <strong style="font-size: 15px; font-weight: 600">Post Insights</strong>
+      <span style="flex: 1 1 auto"></span>
+      <button type="button" aria-label="{{themeLabel}}" onClick="{{toggleTheme}}" style="width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 8px; background: transparent; color: #ffffff; cursor: pointer">
+        <sc-if value="{{dark}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+        <sc-if value="{{light}}" hint-placeholder-val="{{ true }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg></sc-if>
+      </button>
+    </header>
+
+    <div style="display: flex; flex-wrap: wrap">
+      <nav aria-label="Post Insights" style="flex: 0 0 196px; box-sizing: border-box; padding: 16px 10px; border-right: 1px solid {{c.line}}; display: flex; flex-direction: column; gap: 2px">
+        <a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: {{c.ink}}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg>Overview</a>
+        <a href="Posts.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; background: {{c.accentSoft}}; color: {{c.accent}}; font-weight: 600">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg>Posts</a>
+        <a href="Referrers.dc.html" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: {{c.ink}}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"></path></svg>Referrers</a>
+        <sc-if value="{{pro}}" hint-placeholder-val="{{ true }}">
+          <div style="margin: 14px 12px 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{c.muted}}">Pro</div>
+          <a href="Reading.dc.html" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: {{c.ink}}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5h6a4 4 0 0 1 4 4v11a3 3 0 0 0-3-3H2zM22 5h-6a4 4 0 0 0-4 4v11a3 3 0 0 1 3-3h7z"></path></svg>Reading</a>
+          <a href="ReadNext.dc.html" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: {{c.ink}}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>Read next</a>
+        </sc-if>
+        <p style="margin: 24px 12px 0; font-size: 12px; line-height: 1.5; color: {{c.muted}}">No cookies, no visitor's address. Nothing leaves this site.</p>
+      </nav>
+
+      <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 24px">
+        <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; margin-bottom: 16px">
+          <h1 style="margin: 0; font-size: 22px; line-height: 1.3; font-weight: 600">Posts</h1>
+          <p style="margin: 0; font-size: 13px; color: {{c.muted}}">Every published post. Time counts only while the tab is in view.</p>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-bottom: 20px">
+          <div role="group" aria-label="Range" style="display: inline-flex; border: 1px solid {{c.lineStrong}}; border-radius: 8px; overflow: hidden; background: {{c.surface}}">
+            <sc-for list="{{ranges}}" as="r" hint-placeholder-count="4">
+              <button type="button" aria-pressed="{{r.pressed}}" onClick="{{r.pick}}" style="{{r.style}}">{{r.label}}</button>
+            </sc-for>
+          </div>
+          <button type="button" style="display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 12px; border: 1px solid {{c.lineStrong}}; border-radius: 8px; background: {{c.surface}}; color: {{c.ink}}; font: inherit; cursor: pointer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M3 9h18M8 2v4M16 2v4"></path></svg>Custom dates</button>
+          <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: {{c.muted}}">Type
+            <select style="min-height: 40px; padding: 0 8px; border: 1px solid {{c.lineStrong}}; border-radius: 8px; background: {{c.surface}}; color: {{c.ink}}; font: inherit"><option>Posts and pages</option><option>Posts</option><option>Pages</option></select>
+          </label>
+          <sc-if value="{{planned}}" hint-placeholder-val="{{ false }}">
+            <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: {{c.muted}}">Category
+              <select style="min-height: 40px; padding: 0 8px; border: 1px solid {{c.lineStrong}}; border-radius: 8px; background: {{c.surface}}; color: {{c.ink}}; font: inherit"><option>All</option><option>Claude Code</option><option>WordPress</option><option>Health</option></select>
+            </label>
+          </sc-if>
+          <span style="flex: 1 1 auto"></span>
+          <span style="font-size: 13px; color: {{c.muted}}">{{compareText}}</span>
+          <sc-if value="{{planned}}" hint-placeholder-val="{{ false }}">
+            <button type="button" style="display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 12px; border: 1px solid {{c.lineStrong}}; border-radius: 8px; background: {{c.surface}}; color: {{c.ink}}; font: inherit; cursor: pointer">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"></path></svg>Export CSV</button>
+          </sc-if>
+        </div>
+
+        <section aria-labelledby="posts-h" style="background: {{c.surface}}; border: 1px solid {{c.line}}; border-radius: 10px">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 12px 16px; border-bottom: 1px solid {{c.line}}">
+            <h2 id="posts-h" style="margin: 0; font-size: 15px; font-weight: 600">All posts <span style="font-weight: 400; color: {{c.muted}}">· 46 posts</span></h2>
+            <label style="display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 10px; border: 1px solid {{c.lineStrong}}; border-radius: 8px; color: {{c.muted}}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+              <input type="search" placeholder="Search titles" aria-label="Search titles" style="width: 200px; border: 0; outline: 0; background: transparent; color: {{c.ink}}; font: inherit">
+            </label>
+          </div>
+          <div style="overflow-x: auto">
+            <table style="width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums">
+              <thead>
+                <tr>
+                  <sc-for list="{{heads}}" as="h" hint-placeholder-count="6">
+                    <th scope="col" aria-sort="{{h.aria}}" style="{{h.thStyle}}">
+                      <sc-if value="{{h.sortable}}" hint-placeholder-val="{{ true }}">
+                        <button type="button" onClick="{{h.pick}}" style="{{h.btnStyle}}">{{h.label}} <span aria-hidden="true">{{h.arrow}}</span></button>
+                      </sc-if>
+                      <sc-if value="{{h.plain}}" hint-placeholder-val="{{ false }}"><span>{{h.label}}</span> <span style="{{h.tagStyle}}">{{h.tag}}</span></sc-if>
+                    </th>
+                  </sc-for>
+                </tr>
+              </thead>
+              <tbody>
+                <sc-for list="{{rows}}" as="r" hint-placeholder-count="8">
+                  <tr style="border-top: 1px solid {{c.line}}">
+                    <td style="padding: 10px 16px; min-width: 300px">
+                      <a href="Post.dc.html" style="display: block; color: {{c.ink}}; font-weight: 600; text-decoration: none">{{r.title}}</a>
+                      <span style="font-size: 12px; color: {{c.muted}}">{{r.date}} · <a href="Post.dc.html" style="color: {{c.accent}}; text-decoration: none">Details</a> · <a href="#" style="color: {{c.accent}}; text-decoration: none">Edit</a> · <a href="#" style="color: {{c.accent}}; text-decoration: none">View</a></span>
+                    </td>
+                    <td style="padding: 10px 16px; text-align: right; white-space: nowrap">
+                      <span style="font-weight: 600">{{r.views}}</span>
+                      <span aria-hidden="true" style="display: block; height: 4px; margin-top: 4px; border-radius: 999px; background: {{c.track}}"><span style="{{r.barStyle}}"></span></span>
+                    </td>
+                    <td style="padding: 10px 16px; text-align: right; white-space: nowrap"><span style="{{r.changeStyle}}">{{r.change}}</span></td>
+                    <td style="padding: 10px 16px; text-align: right; white-space: nowrap">{{r.avg}}</td>
+                    <sc-if value="{{planned}}" hint-placeholder-val="{{ false }}"><td style="padding: 10px 16px; text-align: right">{{r.end}}</td></sc-if>
+                    <sc-if value="{{pro}}" hint-placeholder-val="{{ true }}">
+                      <td style="padding: 10px 16px; font-size: 13px; color: {{c.muted}}; min-width: 160px">{{r.drop}}</td>
+                      <td style="padding: 10px 16px; text-align: right">{{r.next}}</td>
+                    </sc-if>
+                    <td style="padding: 10px 16px; text-align: right; color: {{c.muted}}">{{r.reactions}}</td>
+                    <td style="padding: 10px 16px; text-align: right; color: {{c.muted}}">{{r.comments}}</td>
+                  </tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </div>
+          <nav aria-label="Pages" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 16px; border-top: 1px solid {{c.line}}; font-size: 13px; color: {{c.muted}}">
+            <span>1–8 of 46</span>
+            <span style="display: inline-flex; gap: 8px">
+              <button type="button" disabled style="min-height: 40px; padding: 0 14px; border: 1px solid {{c.line}}; border-radius: 8px; background: transparent; color: {{c.muted}}; font: inherit">Previous</button>
+              <button type="button" style="min-height: 40px; padding: 0 14px; border: 1px solid {{c.lineStrong}}; border-radius: 8px; background: {{c.surface}}; color: {{c.ink}}; font: inherit; cursor: pointer">Next</button>
+            </span>
+          </nav>
+        </section>
+        <p style="margin: 12px 0 0; font-size: 12px; color: {{c.muted}}">Columns marked with a plugin's name come from that plugin, through the columns hook.</p>
+      </main>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"pro":{"editor":"boolean","default":true},"planned":{"editor":"boolean","default":false},"$preview":{"width":1360,"height":1300}}'>
+class Component extends DCLogic {
+  palette(dark) {
+    return dark ? {
+      bg: '#0b0f10', app: '#0f1415', surface: '#161c1e', line: '#263033', lineStrong: '#3a4648',
+      ink: '#e6edf0', muted: '#9aa6ab', accent: '#5eead4', accentInk: '#04201c', accentSoft: '#123430',
+      gradA: '#0c3532', gradB: '#155e57', bar: '#2dd4bf', track: '#222b2e', up: '#4ade80', down: '#f87171', sunken: '#11171a'
+    } : {
+      bg: '#f0f0f1', app: '#f6f8f8', surface: '#ffffff', line: '#dfe5e4', lineStrong: '#c3cecc',
+      ink: '#1d2327', muted: '#55606a', accent: '#0f766e', accentInk: '#ffffff', accentSoft: '#e3f3f0',
+      gradA: '#0d5c56', gradB: '#13877b', bar: '#14857a', track: '#edf1f0', up: '#107a4c', down: '#b3261e', sunken: '#f6f8f8'
+    };
+  }
+  fmtDay(back) { const d = new Date(2026, 10, 20); d.setDate(d.getDate() - back); return d.getDate() + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]; }
+  renderVals() {
+    const s = this.state || {};
+    const dark = s.dark ?? this.props.dark ?? false;
+    const pro = this.props.pro ?? true;
+    const planned = this.props.planned ?? false;
+    const range = s.range ?? 30;
+    const sort = s.sort ?? { by: 'views', order: 'desc' };
+    const c = this.palette(dark);
+    const scale = { 7: 0.27, 30: 1, 90: 2.6, 0: 5.4 }[range];
+
+    const data = [
+      ['Counting readers without a cookie: building NHR Post Insights', '5 Nov 2026', 212, 38, 191, '41%', 'Storing a view → Things that caught me', 31, 24, 6],
+      ['Log in, and comment, with Google: building NHR Social Login', '12 Nov 2026', 174, 0, 164, '36%', 'The callback → Things that caught me', 27, 18, 9],
+      ['A staging copy like WP Engine’s, on shared hosting', '10 Nov 2026', 151, 0, 226, '29%', 'Copying the files → The database', 19, 15, 3],
+      ['One checkbox took my WordPress server from 780 ms to 300 ms', '13 Oct 2026', 128, -12, 148, '44%', 'Measuring → The checkbox', 22, 31, 7],
+      ['Claude Code tip: mockups first, then the code', '1 Oct 2026', 97, 21, 102, '52%', 'The canvas → Building it', 34, 12, 2],
+      ['From 6,000 to 10,000 steps a day, around a desk job', '6 Oct 2026', 84, -4, 173, '38%', 'The first month → Rain', 12, 22, 5],
+      ['Views and “reading now” on a page a cache may keep', '29 Oct 2026', 66, 8, 139, '33%', 'Reading now → The cache', 25, 9, 1],
+      ['Two-factor sign-in for WordPress with NHR Secure', '15 Sep 2026', 41, -18, 117, '27%', 'Setting it up → Recovery codes', 14, 6, 0]
+    ].map((d) => ({ title: d[0], date: d[1], v: Math.round(d[2] * scale), ch: d[3], sec: d[4], end: d[5], drop: d[6], next: d[7], reactions: d[8], comments: d[9] }));
+
+    const key = { title: (r) => r.title, views: (r) => r.v, average: (r) => r.sec, date: (r) => r.date };
+    const k = key[sort.by] || key.views;
+    data.sort((a, b) => { const x = k(a), y = k(b); const o = x < y ? -1 : x > y ? 1 : 0; return sort.order === 'asc' ? o : -o; });
+    const vmax = Math.max.apply(null, data.map((r) => r.v));
+
+    const rows = data.map((r) => ({
+      title: r.title, date: r.date, views: r.v.toLocaleString('en-US'),
+      barStyle: 'display: block; height: 4px; border-radius: 999px; width: ' + (r.v / vmax * 100) + '%; background: ' + c.bar,
+      change: range === 0 ? '—' : r.ch === 0 ? 'New' : (r.ch > 0 ? '↑ ' : '↓ ') + Math.abs(r.ch) + '%',
+      changeStyle: 'font-size: 13px; font-weight: 600; color: ' + (range === 0 || r.ch === 0 ? c.muted : r.ch > 0 ? c.up : c.down),
+      avg: Math.floor(r.sec / 60) + 'm ' + String(r.sec % 60).padStart(2, '0') + 's',
+      end: r.end, drop: r.drop, next: r.next + '%', reactions: r.reactions, comments: r.comments
+    }));
+
+    const th = 'padding: 0 16px; height: 44px; font-size: 13px; font-weight: 600; color: ' + c.muted + '; background: ' + c.sunken + '; white-space: nowrap; text-align: ';
+    const mk = (id, label, right) => {
+      const active = sort.by === id;
+      return {
+        label, sortable: true, plain: false, tag: '', tagStyle: '',
+        aria: active ? (sort.order === 'asc' ? 'ascending' : 'descending') : 'none',
+        arrow: active ? (sort.order === 'asc' ? '↑' : '↓') : '',
+        thStyle: th + (right ? 'right' : 'left'),
+        btnStyle: 'min-height: 40px; padding: 0; border: 0; background: transparent; font: inherit; cursor: pointer; color: ' + (active ? c.ink : c.muted),
+        pick: () => this.setState({ sort: { by: id, order: active ? (sort.order === 'asc' ? 'desc' : 'asc') : (id === 'title' ? 'asc' : 'desc') } })
+      };
+    };
+    const plain = (label, tag, right) => ({
+      label, tag, sortable: false, plain: true, aria: 'none', arrow: '', pick: null, btnStyle: '',
+      thStyle: th + (right ? 'right' : 'left'),
+      tagStyle: tag ? 'font-size: 11px; font-weight: 600; padding: 1px 6px; border-radius: 999px; border: 1px solid ' + c.lineStrong + '; color: ' + c.muted : 'display: none'
+    });
+    const heads = [mk('title', 'Post', false), mk('views', 'Views', true), plain('Change', '', true), mk('average', 'Average time', true)];
+    if (planned) heads.push(plain('Read to the end', '', true));
+    if (pro) { heads.push(plain('Biggest drop', 'Pro', false)); heads.push(plain('Went on', 'Pro', true)); }
+    heads.push(plain('Reactions', 'Blog', true));
+    heads.push(plain('Comments', 'Blog', true));
+
+    const ranges = [[7, '7 days'], [30, '30 days'], [90, '90 days'], [0, 'All time']].map(([v, l]) => ({
+      label: l, pressed: v === range, pick: () => this.setState({ range: v }),
+      style: 'min-height: 40px; padding: 0 14px; border: 0; font: inherit; cursor: pointer; ' + (v === range ? 'background: ' + c.accent + '; color: ' + c.accentInk + '; font-weight: 600' : 'background: transparent; color: ' + c.ink)
+    }));
+
+    return {
+      c, dark, light: !dark, pro, planned, ranges, heads, rows,
+      themeLabel: dark ? 'Switch to light theme' : 'Switch to dark theme',
+      toggleTheme: () => this.setState({ dark: !dark }),
+      compareText: range ? 'Change against ' + this.fmtDay(range * 2 - 1) + ' – ' + this.fmtDay(range) : 'Since ' + this.fmtDay(209) + ', the first day with a view'
+    };
+  }
+}
+</script>
+</body>
+</html>

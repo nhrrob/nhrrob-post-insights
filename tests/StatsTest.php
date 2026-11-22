@@ -48,4 +48,10 @@ class StatsTest extends TestCase {
 		$this->assertSame( 0, Store::direct( 6, 6 ) );
 		$this->assertSame( 0, Store::direct( 5, 6 ) );
 	}
+
+	public function test_the_days_before_a_range_are_as_many_and_end_the_day_before() {
+		$this->assertSame( [ '2026-10-02', '2026-10-31' ], Store::before( '2026-11-01', '2026-11-30' ) );
+		$this->assertSame( [ '2026-10-31', '2026-10-31' ], Store::before( '2026-11-01', '2026-11-01' ) );
+		$this->assertSame( [ '2024-02-23', '2024-02-29' ], Store::before( '2024-03-01', '2024-03-07' ) );
+	}
 }

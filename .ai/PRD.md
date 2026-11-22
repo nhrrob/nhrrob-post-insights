@@ -28,6 +28,11 @@ Show a site owner how many readers each post gets, where they come from and how 
 
 - Filters, free: the post type, a custom date range (from and to, at most about five years, ending today at the latest) and a title search on Posts. They sit in the one row above the numbers and narrow Overview, Posts, Referrers and one post alike, and they are kept in the address, so a filtered view can be bookmarked. An unknown value is ignored, not an error.
 
+## Version 0.5
+
+- The screens rebuilt to a design (#19, option A, `.ai/DESIGN.md`): one accent, four headline numbers on Overview, each with its change against the same number of days before, a chart with a scale, gridlines and hover values that switches to weeks past 90 days and months past two years, most read posts and where readers came from as ranked lists, and the add-on tiles in their own panel.
+- Posts gains a Change column; Referrers gains cards by kind (search, social, other sites, no referrer, told from the host name) and a change per source.
+
 ## Left out on purpose
 
 - **Unique visitors.** Telling two views apart needs something that identifies the visitor for a day, a hash of the address at least. Left until there is a way that keeps rule 1 of `CLAUDE.md`; #4 decides (see below).

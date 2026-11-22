@@ -108,6 +108,7 @@ class Store {
 		$posts     = $wpdb->get_results( $wpdb->prepare( "SELECT post_id, SUM(views) AS views, SUM(seconds) AS seconds FROM %i WHERE $where GROUP BY post_id ORDER BY views DESC, post_id DESC LIMIT 50", Installer::daily_table() ) );
 		$referrers = $wpdb->get_results( $wpdb->prepare( "SELECT host, SUM(views) AS views FROM %i WHERE $where GROUP BY host ORDER BY views DESC, host ASC LIMIT 50", Installer::referrers_table() ) );
 		$referred  = (int) $wpdb->get_var( $wpdb->prepare( "SELECT SUM(views) FROM %i WHERE $where", Installer::referrers_table() ) );
+		$read      = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(DISTINCT post_id) FROM %i WHERE $where AND views > 0", Installer::daily_table() ) );
 		// phpcs:enable
 
 		$stats = [
@@ -115,8 +116,10 @@ class Store {
 			'views'     => 0,
 			'seconds'   => 0,
 			'direct'    => 0,
+			'read'      => $read,
 			'posts'     => [],
 			'referrers' => [],
+			'previous'  => null,
 		];
 
 		foreach ( $stats['days'] as $day ) {
@@ -145,6 +148,11 @@ class Store {
 			];
 		}
 
+		// All time has no period before it to compare with.
+		if ( 0 !== $asked || $filters['custom'] ) {
+			$stats['previous'] = self::previous( $filters, $post, wp_list_pluck( $stats['referrers'], 'host' ) );
+		}
+
 		/**
 		 * The numbers the dashboard shows.
 		 *
@@ -154,6 +162,66 @@ class Store {
 		 * @param array $filters The first and last day (`from`, `to`, Y-m-d) and the post `type` (empty for every type).
 		 */
 		return (array) apply_filters( 'nhrrob_post_insights_stats', $stats, $asked, $post, $filters );
+	}
+
+	/**
+	 * The days of the same length right before a range.
+	 *
+	 * @param string $from First day, Y-m-d.
+	 * @param string $to   Last day, Y-m-d.
+	 * @return string[] First and last day before, Y-m-d.
+	 */
+	public static function before( $from, $to ) {
+		$length = (int) ( new \DateTime( $from ) )->diff( new \DateTime( $to ) )->days + 1;
+
+		return [
+			gmdate( 'Y-m-d', strtotime( $from . ' -' . $length . ' days' ) ),
+			gmdate( 'Y-m-d', strtotime( $from . ' -1 day' ) ),
+		];
+	}
+
+	/**
+	 * The totals of the days right before a range, to show the change: views,
+	 * seconds, views with no referrer, posts read, and the views of the
+	 * referring sites asked for, by host.
+	 *
+	 * @param array    $filters Resolved filters; see Filters::resolve().
+	 * @param int      $post    Post ID, or 0 for every post.
+	 * @param string[] $hosts   Referring hosts.
+	 * @return array
+	 */
+	public static function previous( $filters, $post, $hosts ) {
+		global $wpdb;
+
+		list( $filters['from'], $filters['to'] ) = self::before( $filters['from'], $filters['to'] );
+
+		$where = Filters::where( $filters, $post );
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- read from the plugin's own tables for one dashboard request; $where is prepared in Filters::where(), and $in holds one %s per host.
+		$totals   = $wpdb->get_row( $wpdb->prepare( "SELECT SUM(views) AS views, SUM(seconds) AS seconds, COUNT(DISTINCT CASE WHEN views > 0 THEN post_id END) AS readers FROM %i WHERE $where", Installer::daily_table() ) );
+		$referred = (int) $wpdb->get_var( $wpdb->prepare( "SELECT SUM(views) FROM %i WHERE $where", Installer::referrers_table() ) );
+		$rows     = [];
+
+		if ( $hosts ) {
+			$in   = implode( ', ', array_fill( 0, count( $hosts ), '%s' ) );
+			$rows = $wpdb->get_results( $wpdb->prepare( "SELECT host, SUM(views) AS views FROM %i WHERE $where AND host IN ($in) GROUP BY host", array_merge( [ Installer::referrers_table() ], array_values( $hosts ) ) ) );
+		}
+		// phpcs:enable
+
+		$views   = $totals ? (int) $totals->views : 0;
+		$by_host = [];
+
+		foreach ( $rows as $row ) {
+			$by_host[ (string) $row->host ] = (int) $row->views;
+		}
+
+		return [
+			'views'     => $views,
+			'seconds'   => $totals ? (int) $totals->seconds : 0,
+			'direct'    => self::direct( $views, $referred ),
+			'read'      => $totals ? (int) $totals->readers : 0,
+			'referrers' => (object) $by_host,
+		];
 	}
 
 	/**
@@ -248,6 +316,25 @@ class Store {
 		);
 		// phpcs:enable
 
+		$before = [];
+
+		// The views of the same days before, for the change; all time has none.
+		if ( $rows && ( 0 !== (int) $days || $filters['custom'] ) ) {
+			list( $first, $last ) = self::before( $filters['from'], $filters['to'] );
+
+			$ids = array_map( 'intval', wp_list_pluck( $rows, 'id' ) );
+			$in  = implode( ', ', array_fill( 0, count( $ids ), '%d' ) );
+
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- the plugin's own table; $in holds one %d per post.
+			$found = $wpdb->get_results( $wpdb->prepare( "SELECT post_id, SUM(views) AS views FROM %i WHERE day BETWEEN %s AND %s AND post_id IN ($in) GROUP BY post_id", array_merge( [ Installer::daily_table(), $first, $last ], $ids ) ) );
+
+			$before = array_fill_keys( $ids, 0 );
+
+			foreach ( $found as $row ) {
+				$before[ (int) $row->post_id ] = (int) $row->views;
+			}
+		}
+
 		$posts = [];
 
 		foreach ( $rows as $row ) {
@@ -262,6 +349,7 @@ class Store {
 				'date'    => (string) get_the_date( 'Y-m-d', $id ),
 				'views'   => (int) $row->views,
 				'seconds' => (int) $row->seconds,
+				'before'  => isset( $before[ $id ] ) ? $before[ $id ] : null,
 				'extra'   => [],
 			];
 		}
@@ -270,7 +358,7 @@ class Store {
 		 * The rows of one page of the posts table. An add-on fills a declared
 		 * column in each row's `extra`, by the column's key.
 		 *
-		 * @param array $posts   Rows: id, title, link, edit, date, views, seconds, extra.
+		 * @param array $posts   Rows: id, title, link, edit, date, views, seconds, before (views of the days before, null for all time), extra.
 		 * @param int   $days    Number of days, or 0 for all time.
 		 * @param array $filters The first and last day (`from`, `to`, Y-m-d), the post `type` and the title `search`.
 		 */

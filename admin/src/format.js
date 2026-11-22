@@ -79,3 +79,47 @@ export function byKind( kind, value ) {
 export function dayLabel( format, day ) {
 	return dateI18n( format, day + 'T12:00:00Z', true );
 }
+
+/**
+ * The change from the days before, as text and a tone.
+ *
+ * @param {number}      now    This period's number.
+ * @param {number|null} before The number of the days before; null for all time.
+ * @return {Object|null} text and tone (up, down or flat), or null when there is nothing to compare.
+ */
+export function change( now, before ) {
+	if ( null === before || undefined === before ) {
+		return null;
+	}
+
+	if ( ! before ) {
+		return now
+			? { text: __( 'New', 'nhrrob-post-insights' ), tone: 'flat' }
+			: null;
+	}
+
+	const percent = Math.round( ( ( now - before ) / before ) * 100 );
+
+	if ( ! percent ) {
+		return {
+			text: __( 'No change', 'nhrrob-post-insights' ),
+			tone: 'flat',
+		};
+	}
+
+	return {
+		text: ( percent > 0 ? '↑ ' : '↓ ' ) + Math.abs( percent ) + '%',
+		tone: percent > 0 ? 'up' : 'down',
+	};
+}
+
+/**
+ * A share of a whole as a rounded percentage.
+ *
+ * @param {number} part  Part.
+ * @param {number} whole Whole.
+ * @return {string} Such as "41%".
+ */
+export function share( part, whole ) {
+	return ( whole ? Math.round( ( part / whole ) * 100 ) : 0 ) + '%';
+}

@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Post Insights: one post</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif; font-size: 14px; line-height: 1.5; color: {{c.ink}}; background: {{c.bg}}; min-height: 1400px; padding: 20px 16px; box-sizing: border-box">
+  <div style="max-width: 1320px; margin: 0 auto; border: 1px solid {{c.line}}; border-radius: 12px; overflow: hidden; background: {{c.app}}">
+
+    <header style="display: flex; align-items: center; gap: 10px; padding: 0 8px 0 16px; min-height: 56px; background: linear-gradient(135deg, {{c.gradA}} 0%, {{c.gradB}} 100%); color: #ffffff">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg>
+      <strong style="font-size: 15px; font-weight: 600">Post Insights</strong>
+      <span style="flex: 1 1 auto"></span>
+      <button type="button" aria-label="{{themeLabel}}" onClick="{{toggleTheme}}" style="width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 8px; background: transparent; color: #ffffff; cursor: pointer">
+        <sc-if value="{{dark}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+        <sc-if value="{{light}}" hint-placeholder-val="{{ true }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg></sc-if>
+      </button>
+    </header>
+
+    <div style="display: flex; flex-wrap: wrap">
+      <nav aria-label="Post Insights" style="flex: 0 0 196px; box-sizing: border-box; padding: 16px 10px; border-right: 1px solid {{c.line}}; display: flex; flex-direction: column; gap: 2px">
+        <a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: {{c.ink}}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg>Overview</a>
+        <a href="Posts.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; background: {{c.accentSoft}}; color: {{c.accent}}; font-weight: 600">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg>Posts</a>
+        <a href="Referrers.dc.html" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: {{c.ink}}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"></path></svg>Referrers</a>
+        <sc-if value="{{pro}}" hint-placeholder-val="{{ true }}">
+          <div style="margin: 14px 12px 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{c.muted}}">Pro</div>
+          <a href="Reading.dc.html" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: {{c.ink}}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5h6a4 4 0 0 1 4 4v11a3 3 0 0 0-3-3H2zM22 5h-6a4 4 0 0 0-4 4v11a3 3 0 0 1 3-3h7z"></path></svg>Reading</a>
+          <a href="ReadNext.dc.html" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: {{c.ink}}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>Read next</a>
+        </sc-if>
+        <p style="margin: 24px 12px 0; font-size: 12px; line-height: 1.5; color: {{c.muted}}">No cookies, no visitor's address. Nothing leaves this site.</p>
+      </nav>
+
+      <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 24px">
+        <a href="Posts.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: {{c.accent}}; font-weight: 600; text-decoration: none">← All posts</a>
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 8px 16px; margin: 4px 0 16px">
+          <div style="min-width: 0">
+            <h1 style="margin: 0; font-size: 22px; line-height: 1.3; font-weight: 600">Counting readers without a cookie: building NHR Post Insights</h1>
+            <p style="margin: 4px 0 0; font-size: 13px; color: {{c.muted}}">Published 5 Nov 2026 · Claude Code · <a href="#" style="color: {{c.accent}}; text-decoration: none">View post</a> · <a href="#" style="color: {{c.accent}}; text-decoration: none">Edit</a></p>
+          </div>
+          <div role="group" aria-label="Range" style="display: inline-flex; border: 1px solid {{c.lineStrong}}; border-radius: 8px; overflow: hidden; background: {{c.surface}}">
+            <button type="button" aria-pressed="false" style="min-height: 40px; padding: 0 14px; border: 0; background: transparent; color: {{c.ink}}; font: inherit">7 days</button>
+            <button type="button" aria-pressed="true" style="min-height: 40px; padding: 0 14px; border: 0; background: {{c.accent}}; color: {{c.accentInk}}; font: inherit; font-weight: 600">30 days</button>
+            <button type="button" aria-pressed="false" style="min-height: 40px; padding: 0 14px; border: 0; background: transparent; color: {{c.ink}}; font: inherit">90 days</button>
+            <button type="button" aria-pressed="false" style="min-height: 40px; padding: 0 14px; border: 0; background: transparent; color: {{c.ink}}; font: inherit">All time</button>
+          </div>
+        </div>
+
+        <sc-if value="{{pro}}" hint-placeholder-val="{{ true }}">
+          <div role="tablist" aria-label="This post" style="display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 16px; border-bottom: 1px solid {{c.line}}">
+            <sc-for list="{{tabs}}" as="t" hint-placeholder-count="3">
+              <button type="button" role="tab" aria-selected="{{t.selected}}" onClick="{{t.pick}}" style="{{t.style}}">{{t.label}}</button>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{showOverview}}" hint-placeholder-val="{{ false }}">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px">
+            <sc-for list="{{kpis}}" as="k" hint-placeholder-count="3">
+              <div style="background: {{c.surface}}; border: 1px solid {{c.line}}; border-radius: 10px; padding: 16px">
+                <div style="font-size: 13px; color: {{c.muted}}">{{k.label}}</div>
+                <div style="margin-top: 4px; font-size: 28px; line-height: 1.2; font-weight: 600; font-variant-numeric: tabular-nums">{{k.value}}</div>
+                <div style="margin-top: 6px; font-size: 13px"><span style="font-weight: 600; color: {{c.up}}">{{k.delta}}</span> <span style="color: {{c.muted}}">vs the 30 days before</span></div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px">
+            <section aria-labelledby="pd-h" style="background: {{c.surface}}; border: 1px solid {{c.line}}; border-radius: 10px">
+              <div style="padding: 14px 16px; border-bottom: 1px solid {{c.line}}"><h2 id="pd-h" style="margin: 0; font-size: 15px; font-weight: 600">Views per day</h2></div>
+              <div style="padding: 16px">
+                <div style="position: relative; height: 200px; display: flex; align-items: flex-end; gap: 3px; border-bottom: 1px solid {{c.lineStrong}}">
+                  <sc-for list="{{bars}}" as="b" hint-placeholder-count="30"><div title="{{b.title}}" style="{{b.style}}"></div></sc-for>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 6px; font-size: 12px; color: {{c.muted}}"><span>22 Oct</span><span>5 Nov, published</span><span>20 Nov</span></div>
+              </div>
+            </section>
+            <section aria-labelledby="ps-h" style="background: {{c.surface}}; border: 1px solid {{c.line}}; border-radius: 10px">
+              <div style="display: flex; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid {{c.line}}"><h2 id="ps-h" style="margin: 0; font-size: 15px; font-weight: 600">Where its readers came from</h2><span style="font-size: 13px; color: {{c.muted}}">Views</span></div>
+              <ol style="list-style: none; margin: 0; padding: 8px">
+                <sc-for list="{{sources}}" as="s" hint-placeholder-count="5">
+                  <li style="position: relative; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 40px; padding: 0 8px">
+                    <span aria-hidden="true" style="{{s.barStyle}}"></span>
+                    <span style="{{s.nameStyle}}">{{s.name}}</span>
+                    <span style="position: relative; font-weight: 600; font-variant-numeric: tabular-nums">{{s.views}}</span>
+                  </li>
+                </sc-for>
+              </ol>
+            </section>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{showMap}}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start">
+            <section aria-labelledby="map-h" style="flex: 999 1 520px; min-width: 0; background: {{c.surface}}; border: 1px solid {{c.line}}; border-radius: 10px">
+              <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding: 14px 16px; border-bottom: 1px solid {{c.line}}">
+                <h2 id="map-h" style="margin: 0; font-size: 15px; font-weight: 600">How far its readers got</h2>
+                <span style="font-size: 13px; color: {{c.muted}}">Share of 212 views that reached each section</span>
+              </div>
+              <ol style="list-style: none; margin: 0; padding: 12px 16px 16px">
+                <sc-for list="{{map}}" as="m" hint-placeholder-count="9">
+                  <li>
+                    <sc-if value="{{m.drop}}" hint-placeholder-val="{{ false }}">
+                      <div style="display: flex; align-items: center; gap: 8px; margin: 2px 0 2px 24px; padding: 6px 10px; border-radius: 8px; font-size: 13px; background: {{c.warnSoft}}; color: {{c.warn}}">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"></path></svg>
+                        <span><strong>Biggest drop: {{m.lost}} of readers left here.</strong> Before “{{m.title}}”.</span>
+                      </div>
+                    </sc-if>
+                    <div style="display: grid; grid-template-columns: 16px minmax(0, 1fr) 52px; align-items: center; gap: 4px 10px; min-height: 44px">
+                      <span aria-hidden="true" style="{{m.dotStyle}}"></span>
+                      <div style="min-width: 0">
+                        <div style="font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{m.title}}</div>
+                        <div aria-hidden="true" style="margin-top: 4px; height: 8px; border-radius: 999px; background: {{c.track}}"><div style="{{m.barStyle}}"></div></div>
+                      </div>
+                      <span style="text-align: right; font-weight: 600; font-variant-numeric: tabular-nums">{{m.share}}</span>
+                    </div>
+                  </li>
+                </sc-for>
+              </ol>
+            </section>
+            <aside aria-label="What this says" style="flex: 1 1 280px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+              <div style="background: {{c.surface}}; border: 1px solid {{c.line}}; border-radius: 10px; padding: 16px">
+                <div style="font-size: 13px; color: {{c.muted}}">Read to the end</div>
+                <div style="margin-top: 4px; font-size: 28px; font-weight: 600">41%</div>
+                <div style="margin-top: 4px; font-size: 13px; color: {{c.muted}}">The site's posts: 34%</div>
+              </div>
+              <div style="background: {{c.surface}}; border: 1px solid {{c.line}}; border-radius: 10px; padding: 16px">
+                <div style="font-size: 13px; color: {{c.muted}}">Read past half</div>
+                <div style="margin-top: 4px; font-size: 28px; font-weight: 600">58%</div>
+              </div>
+              <p style="margin: 0; font-size: 13px; color: {{c.muted}}">A section counts once per view, when its heading comes into sight. Only the furthest heading of each view is kept; nothing about the reader.</p>
+            </aside>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{showNext}}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start">
+            <section aria-labelledby="nx-h" style="flex: 999 1 520px; min-width: 0; background: {{c.surface}}; border: 1px solid {{c.line}}; border-radius: 10px">
+              <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding: 14px 16px; border-bottom: 1px solid {{c.line}}">
+                <h2 id="nx-h" style="margin: 0; font-size: 15px; font-weight: 600">What its readers opened next</h2>
+                <span style="font-size: 13px; color: {{c.muted}}">Views that came from this post</span>
+              </div>
+              <ol style="list-style: none; margin: 0; padding: 8px">
+                <sc-for list="{{next}}" as="x" hint-placeholder-count="5">
+                  <li style="position: relative; display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 8px">
+                    <span aria-hidden="true" style="{{x.barStyle}}"></span>
+                    <span aria-hidden="true" style="position: relative; color: {{c.muted}}">→</span>
+                    <a href="Post.dc.html" style="{{x.linkStyle}}">{{x.title}}</a>
+                    <span style="position: relative; font-weight: 600; font-variant-numeric: tabular-nums">{{x.views}}</span>
+                  </li>
+                </sc-for>
+              </ol>
+            </section>
+            <aside aria-label="Summary" style="flex: 1 1 280px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+              <div style="background: {{c.surface}}; border: 1px solid {{c.line}}; border-radius: 10px; padding: 16px">
+                <div style="font-size: 13px; color: {{c.muted}}">Went on to another post</div>
+                <div style="margin-top: 4px; font-size: 28px; font-weight: 600">31%</div>
+                <div style="margin-top: 4px; font-size: 13px; color: {{c.muted}}">66 of 212 views. The site's posts: 23%</div>
+              </div>
+              <div style="background: {{c.surface}}; border: 1px solid {{c.line}}; border-radius: 10px; padding: 16px">
+                <div style="font-size: 13px; color: {{c.muted}}">Came here from another post</div>
+                <div style="margin-top: 4px; font-size: 28px; font-weight: 600">19</div>
+                <div style="margin-top: 4px; font-size: 13px; color: {{c.muted}}">Most from “Views and “reading now” on a page a cache may keep”</div>
+              </div>
+            </aside>
+          </div>
+        </sc-if>
+      </main>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"pro":{"editor":"boolean","default":true},"planned":{"editor":"boolean","default":false},"$preview":{"width":1360,"height":1400}}'>
+class Component extends DCLogic {
+  palette(dark) {
+    return dark ? {
+      bg: '#0b0f10', app: '#0f1415', surface: '#161c1e', line: '#263033', lineStrong: '#3a4648',
+      ink: '#e6edf0', muted: '#9aa6ab', accent: '#5eead4', accentInk: '#04201c', accentSoft: '#123430',
+      gradA: '#0c3532', gradB: '#155e57', bar: '#2dd4bf', track: '#222b2e', up: '#4ade80', tint: '#123430',
+      warn: '#fdba74', warnSoft: '#3a2414', warnBar: '#fb923c'
+    } : {
+      bg: '#f0f0f1', app: '#f6f8f8', surface: '#ffffff', line: '#dfe5e4', lineStrong: '#c3cecc',
+      ink: '#1d2327', muted: '#55606a', accent: '#0f766e', accentInk: '#ffffff', accentSoft: '#e3f3f0',
+      gradA: '#0d5c56', gradB: '#13877b', bar: '#14857a', track: '#edf1f0', up: '#107a4c', tint: '#e8f5f2',
+      warn: '#9a3f07', warnSoft: '#fdf0e1', warnBar: '#d9630f'
+    };
+  }
+  renderVals() {
+    const s = this.state || {};
+    const dark = s.dark ?? this.props.dark ?? false;
+    const pro = this.props.pro ?? true;
+    const planned = this.props.planned ?? false;
+    const tab = pro ? (s.tab ?? 'map') : 'overview';
+    const c = this.palette(dark);
+
+    const tabs = [['overview', 'Overview'], ['map', 'Reading map'], ['next', 'Read next']].map(([id, label]) => ({
+      label, selected: tab === id, pick: () => this.setState({ tab: id }),
+      style: 'min-height: 44px; padding: 0 14px; margin-bottom: -1px; border: 0; border-bottom: 3px solid ' + (tab === id ? c.accent : 'transparent') + '; background: transparent; font: inherit; cursor: pointer; color: ' + (tab === id ? c.ink : c.muted) + '; font-weight: ' + (tab === id ? '600' : '400')
+    }));
+
+    const kpis = [{ label: 'Views', value: '212', delta: 'New' }, { label: 'Average time', value: '3m 11s', delta: '' }, { label: 'From other sites', value: '64%', delta: '' }];
+    if (planned) kpis.push({ label: 'Read to the end', value: '41%', delta: '' });
+
+    const raw = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,46,31,18,12,9,11,8,6,14,9,7,5,6,8,7,5];
+    const bars = raw.map((v, i) => ({ title: v + ' views', style: 'flex: 1 1 0; border-radius: 3px 3px 0 0; height: ' + Math.max(v ? 2 : 0.5, v / 46 * 100) + '%; background: ' + (v ? c.bar : c.track) }));
+    const sources = [['linkedin.com', 61], ['No referrer', 52], ['t.co', 38], ['google.com', 27], ['reddit.com', 19], ['nazmulrobin.com', 15]].map(([name, v]) => ({
+      name, views: v,
+      nameStyle: 'position: relative; ' + (name === 'No referrer' ? 'font-style: italic; color: ' + c.muted : 'font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px'),
+      barStyle: 'position: absolute; left: 0; top: 4px; bottom: 4px; border-radius: 6px; width: ' + (v / 61 * 100) + '%; background: ' + c.tint
+    }));
+
+    const heads = [['Start of the post', 100], ['Why my own plugin', 92], ['Counted by a script, not in PHP', 84], ['What “time on a page” can mean', 77], ['Two small tables', 71], ['Open routes, and what that costs', 46], ['A month of numbers', 44], ['What was left out', 42], ['Things that caught me', 41]];
+    let biggest = 1, gapMax = 0;
+    heads.forEach((h, i) => { if (i && heads[i - 1][1] - h[1] > gapMax) { gapMax = heads[i - 1][1] - h[1]; biggest = i; } });
+    const map = heads.map(([title, p], i) => ({
+      title, share: p + '%', drop: i === biggest, lost: gapMax + '%',
+      dotStyle: 'width: 10px; height: 10px; border-radius: 50%; justify-self: center; background: ' + (i >= biggest ? c.warnBar : c.bar),
+      barStyle: 'height: 8px; border-radius: 999px; width: ' + p + '%; background: ' + (i >= biggest ? c.warnBar : c.bar)
+    }));
+
+    const next = [['Views and “reading now” on a page a cache may keep', 24], ['Making a WordPress plugin ready for AI agents, with abilities', 14], ['Log in, and comment, with Google: building NHR Social Login', 11], ['Claude Code tip: mockups first, then the code', 9], ['Why I built this WordPress blog', 8]].map(([title, v]) => ({
+      title, views: v,
+      linkStyle: 'position: relative; flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-decoration: none; color: ' + c.ink,
+      barStyle: 'position: absolute; left: 0; top: 4px; bottom: 4px; border-radius: 6px; width: ' + (v / 24 * 100) + '%; background: ' + c.tint
+    }));
+
+    return {
+      c, dark, light: !dark, pro, planned, tabs, kpis, bars, sources, map, next,
+      showOverview: tab === 'overview', showMap: tab === 'map', showNext: tab === 'next',
+      themeLabel: dark ? 'Switch to light theme' : 'Switch to dark theme',
+      toggleTheme: () => this.setState({ dark: !dark })
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -109,5 +109,13 @@ class FiltersTest extends TestCase {
 			Store::days( '2026-10-30', 2, [] )
 		);
 	}
-}
 
+	public function test_a_custom_range_is_two_real_days_in_order_from_today_at_the_latest() {
+		$this->assertTrue( Filters::is_custom( '2026-10-01', '2026-10-31', '2026-11-10' ) );
+		$this->assertTrue( Filters::is_custom( '2026-11-10', '2027-01-01', '2026-11-10' ) );
+		$this->assertFalse( Filters::is_custom( '2026-10-31', '2026-10-01', '2026-11-10' ) );
+		$this->assertFalse( Filters::is_custom( '2026-10-01', '', '2026-11-10' ) );
+		$this->assertFalse( Filters::is_custom( '2026-02-30', '2026-03-01', '2026-11-10' ) );
+		$this->assertFalse( Filters::is_custom( '2026-11-11', '2026-11-12', '2026-11-10' ) );
+	}
+}

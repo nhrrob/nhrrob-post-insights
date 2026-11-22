@@ -119,7 +119,7 @@ class Filters {
 		$from = self::date( $from );
 		$to   = self::date( $to );
 
-		if ( '' === $from || '' === $to || $from > $to || $from > $today ) {
+		if ( ! self::is_custom( $from, $to, $today ) ) {
 			return [ Store::from( $days ), $today ];
 		}
 
@@ -130,19 +130,39 @@ class Filters {
 	}
 
 	/**
+	 * Whether two days make a custom range: both real dates, in order, the
+	 * first not after today.
+	 *
+	 * @param string $from  First day, Y-m-d, or empty.
+	 * @param string $to    Last day, Y-m-d, or empty.
+	 * @param string $today Today, Y-m-d.
+	 * @return bool
+	 */
+	public static function is_custom( $from, $to, $today ) {
+		$from = self::date( $from );
+		$to   = self::date( $to );
+
+		return '' !== $from && '' !== $to && $from <= $to && $from <= $today;
+	}
+
+	/**
 	 * The filters of a request, sanitized, with the days they resolve to.
 	 *
 	 * @param int   $days    Number of days, or 0 for all time.
 	 * @param array $filters Any of type, from, to and search.
-	 * @return array from, to, type and search.
+	 * @return array from, to, type, search, and custom: whether the days are a custom range.
 	 */
 	public static function resolve( $days, $filters ) {
 		$filters = (array) $filters;
-		$range   = self::range( $days, isset( $filters['from'] ) ? $filters['from'] : '', isset( $filters['to'] ) ? $filters['to'] : '', current_time( 'Y-m-d' ) );
+		$from    = isset( $filters['from'] ) ? $filters['from'] : '';
+		$to      = isset( $filters['to'] ) ? $filters['to'] : '';
+		$today   = current_time( 'Y-m-d' );
+		$range   = self::range( $days, $from, $to, $today );
 
 		return [
 			'from'   => $range[0],
 			'to'     => $range[1],
+			'custom' => self::is_custom( $from, $to, $today ),
 			'type'   => self::type( isset( $filters['type'] ) ? $filters['type'] : '' ),
 			'search' => self::search( isset( $filters['search'] ) ? $filters['search'] : '' ),
 		];
