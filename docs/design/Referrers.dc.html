@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Post Insights: Referrers</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif; font-size: 14px; line-height: 1.5; color: {{c.ink}}; background: {{c.bg}}; min-height: 1200px; padding: 20px 16px; box-sizing: border-box">
+  <div style="max-width: 1320px; margin: 0 auto; border: 1px solid {{c.line}}; border-radius: 12px; overflow: hidden; background: {{c.app}}">
+
+    <header style="display: flex; align-items: center; gap: 10px; padding: 0 8px 0 16px; min-height: 56px; background: linear-gradient(135deg, {{c.gradA}} 0%, {{c.gradB}} 100%); color: #ffffff">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg>
+      <strong style="font-size: 15px; font-weight: 600">Post Insights</strong>
+      <span style="flex: 1 1 auto"></span>
+      <button type="button" aria-label="{{themeLabel}}" onClick="{{toggleTheme}}" style="width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 8px; background: transparent; color: #ffffff; cursor: pointer">
+        <sc-if value="{{dark}}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+        <sc-if value="{{light}}" hint-placeholder-val="{{ true }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg></sc-if>
+      </button>
+    </header>
+
+    <div style="display: flex; flex-wrap: wrap">
+      <nav aria-label="Post Insights" style="flex: 0 0 196px; box-sizing: border-box; padding: 16px 10px; border-right: 1px solid {{c.line}}; display: flex; flex-direction: column; gap: 2px">
+        <a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: {{c.ink}}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg>Overview</a>
+        <a href="Posts.dc.html" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: {{c.ink}}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg>Posts</a>
+        <a href="Referrers.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; background: {{c.accentSoft}}; color: {{c.accent}}; font-weight: 600">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"></path></svg>Referrers</a>
+        <sc-if value="{{pro}}" hint-placeholder-val="{{ true }}">
+          <div style="margin: 14px 12px 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: {{c.muted}}">Pro</div>
+          <a href="Reading.dc.html" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: {{c.ink}}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5h6a4 4 0 0 1 4 4v11a3 3 0 0 0-3-3H2zM22 5h-6a4 4 0 0 0-4 4v11a3 3 0 0 1 3-3h7z"></path></svg>Reading</a>
+          <a href="ReadNext.dc.html" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: {{c.ink}}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>Read next</a>
+        </sc-if>
+        <p style="margin: 24px 12px 0; font-size: 12px; line-height: 1.5; color: {{c.muted}}">No cookies, no visitor's address. Nothing leaves this site.</p>
+      </nav>
+
+      <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 24px">
+        <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; margin-bottom: 16px">
+          <h1 style="margin: 0; font-size: 22px; line-height: 1.3; font-weight: 600">Referrers</h1>
+          <p style="margin: 0; font-size: 13px; color: {{c.muted}}">Only the referring site's name is kept, never the full address.</p>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-bottom: 20px">
+          <div role="group" aria-label="Range" style="display: inline-flex; border: 1px solid {{c.lineStrong}}; border-radius: 8px; overflow: hidden; background: {{c.surface}}">
+            <button type="button" aria-pressed="false" style="min-height: 40px; padding: 0 14px; border: 0; background: transparent; color: {{c.ink}}; font: inherit">7 days</button>
+            <button type="button" aria-pressed="true" style="min-height: 40px; padding: 0 14px; border: 0; background: {{c.accent}}; color: {{c.accentInk}}; font: inherit; font-weight: 600">30 days</button>
+            <button type="button" aria-pressed="false" style="min-height: 40px; padding: 0 14px; border: 0; background: transparent; color: {{c.ink}}; font: inherit">90 days</button>
+            <button type="button" aria-pressed="false" style="min-height: 40px; padding: 0 14px; border: 0; background: transparent; color: {{c.ink}}; font: inherit">All time</button>
+          </div>
+          <button type="button" style="display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 12px; border: 1px solid {{c.lineStrong}}; border-radius: 8px; background: {{c.surface}}; color: {{c.ink}}; font: inherit; cursor: pointer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M3 9h18M8 2v4M16 2v4"></path></svg>Custom dates</button>
+          <span style="flex: 1 1 auto"></span>
+          <span style="font-size: 13px; color: {{c.muted}}">Compared with 22 Sep – 21 Oct</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px">
+          <sc-for list="{{groups}}" as="g" hint-placeholder-count="4">
+            <button type="button" aria-pressed="{{g.pressed}}" onClick="{{g.pick}}" style="{{g.style}}">
+              <span style="display: block; font-size: 13px; color: {{c.muted}}">{{g.label}}</span>
+              <span style="display: block; margin-top: 2px; font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{c.ink}}">{{g.share}}</span>
+              <span style="display: block; font-size: 13px; color: {{c.muted}}">{{g.views}} views</span>
+            </button>
+          </sc-for>
+        </div>
+
+        <section aria-labelledby="ref-h" style="background: {{c.surface}}; border: 1px solid {{c.line}}; border-radius: 10px">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 14px 16px; border-bottom: 1px solid {{c.line}}">
+            <h2 id="ref-h" style="margin: 0; font-size: 15px; font-weight: 600">{{listTitle}}</h2>
+            <span style="font-size: 13px; color: {{c.muted}}">Social networks and referring sites in one ranked list</span>
+          </div>
+          <div style="overflow-x: auto">
+            <table style="width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums">
+              <thead>
+                <tr style="font-size: 13px; color: {{c.muted}}; background: {{c.sunken}}">
+                  <th scope="col" style="padding: 0 16px; height: 44px; text-align: left; font-weight: 600; width: 36px">#</th>
+                  <th scope="col" style="padding: 0 16px; text-align: left; font-weight: 600">Source</th>
+                  <th scope="col" style="padding: 0 16px; text-align: left; font-weight: 600">Kind</th>
+                  <th scope="col" style="padding: 0 16px; text-align: left; font-weight: 600; min-width: 220px">Share of views</th>
+                  <th scope="col" style="padding: 0 16px; text-align: right; font-weight: 600">Views</th>
+                  <th scope="col" style="padding: 0 16px; text-align: right; font-weight: 600">Change</th>
+                </tr>
+              </thead>
+              <tbody>
+                <sc-for list="{{rows}}" as="r" hint-placeholder-count="10">
+                  <tr style="border-top: 1px solid {{c.line}}">
+                    <td style="padding: 0 16px; height: 48px; color: {{c.muted}}">{{r.rank}}</td>
+                    <td style="padding: 0 16px"><span style="{{r.nameStyle}}">{{r.name}}</span></td>
+                    <td style="padding: 0 16px"><span style="font-size: 12px; padding: 1px 8px; border-radius: 999px; border: 1px solid {{c.line}}; color: {{c.muted}}">{{r.kind}}</span></td>
+                    <td style="padding: 0 16px">
+                      <span style="display: flex; align-items: center; gap: 10px"><span aria-hidden="true" style="flex: 1 1 auto; height: 8px; border-radius: 999px; background: {{c.track}}"><span style="{{r.barStyle}}"></span></span><span style="width: 40px; text-align: right; font-weight: 600">{{r.share}}</span></span>
+                    </td>
+                    <td style="padding: 0 16px; text-align: right">{{r.views}}</td>
+                    <td style="padding: 0 16px; text-align: right"><span style="{{r.changeStyle}}">{{r.change}}</span></td>
+                  </tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <sc-if value="{{planned}}" hint-placeholder-val="{{ false }}">
+          <section aria-labelledby="utm-h" style="margin-top: 16px; background: {{c.surface}}; border: 1px solid {{c.line}}; border-radius: 10px">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding: 14px 16px; border-bottom: 1px solid {{c.line}}">
+              <h2 id="utm-h" style="margin: 0; font-size: 15px; font-weight: 600">Campaigns</h2>
+              <span style="font-size: 13px; color: {{c.muted}}">From utm_source and utm_campaign in the address</span>
+            </div>
+            <ul style="list-style: none; margin: 0; padding: 4px 16px">
+              <li style="display: flex; justify-content: space-between; min-height: 44px; align-items: center; border-bottom: 1px solid {{c.line}}"><span style="font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px">newsletter / november</span><strong>48</strong></li>
+              <li style="display: flex; justify-content: space-between; min-height: 44px; align-items: center"><span style="font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px">linkedin / post-insights</span><strong>31</strong></li>
+            </ul>
+          </section>
+        </sc-if>
+      </main>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"pro":{"editor":"boolean","default":true},"planned":{"editor":"boolean","default":false},"$preview":{"width":1360,"height":1200}}'>
+class Component extends DCLogic {
+  palette(dark) {
+    return dark ? {
+      bg: '#0b0f10', app: '#0f1415', surface: '#161c1e', line: '#263033', lineStrong: '#3a4648', sunken: '#11171a',
+      ink: '#e6edf0', muted: '#9aa6ab', accent: '#5eead4', accentInk: '#04201c', accentSoft: '#123430',
+      gradA: '#0c3532', gradB: '#155e57', bar: '#2dd4bf', track: '#222b2e', up: '#4ade80', down: '#f87171'
+    } : {
+      bg: '#f0f0f1', app: '#f6f8f8', surface: '#ffffff', line: '#dfe5e4', lineStrong: '#c3cecc', sunken: '#f6f8f8',
+      ink: '#1d2327', muted: '#55606a', accent: '#0f766e', accentInk: '#ffffff', accentSoft: '#e3f3f0',
+      gradA: '#0d5c56', gradB: '#13877b', bar: '#14857a', track: '#edf1f0', up: '#107a4c', down: '#b3261e'
+    };
+  }
+  renderVals() {
+    const s = this.state || {};
+    const dark = s.dark ?? this.props.dark ?? false;
+    const pro = this.props.pro ?? true;
+    const planned = this.props.planned ?? false;
+    const kind = s.kind ?? 'all';
+    const c = this.palette(dark);
+    const total = 1764;
+    const all = [
+      ['No referrer', 'Direct', 723, 4], ['google.com', 'Search', 388, 18], ['linkedin.com', 'Social', 247, 31],
+      ['t.co', 'Social', 159, -6], ['reddit.com', 'Social', 106, 12], ['duckduckgo.com', 'Search', 71, 3],
+      ['bing.com', 'Search', 28, -2], ['github.com', 'Site', 25, 40], ['facebook.com', 'Social', 12, 0], ['make.wordpress.org', 'Site', 5, 0]
+    ];
+    const sumOf = (k) => all.filter((r) => r[1] === k).reduce((a, r) => a + r[2], 0);
+    const groups = [['all', 'All sources', total], ['Search', 'Search', sumOf('Search')], ['Social', 'Social', sumOf('Social')], ['Site', 'Other sites', sumOf('Site')], ['Direct', 'No referrer', sumOf('Direct')]].map(([id, label, v]) => ({
+      label, views: v.toLocaleString('en-US'), share: Math.round(v / total * 100) + '%', pressed: kind === id,
+      pick: () => this.setState({ kind: id }),
+      style: 'text-align: left; padding: 14px 16px; border-radius: 10px; font: inherit; cursor: pointer; border: 1px solid ' + (kind === id ? c.accent : c.line) + '; background: ' + (kind === id ? c.accentSoft : c.surface) + '; box-shadow: ' + (kind === id ? 'inset 0 0 0 1px ' + c.accent : 'none')
+    }));
+    const list = all.filter((r) => kind === 'all' || r[1] === kind);
+    const max = list.length ? list[0][2] : 1;
+    const rows = list.map((r, i) => ({
+      rank: i + 1, name: r[0], kind: r[1], views: r[2].toLocaleString('en-US'), share: Math.round(r[2] / total * 100) + '%',
+      nameStyle: r[0] === 'No referrer' ? 'font-style: italic; color: ' + c.muted : 'font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px',
+      barStyle: 'display: block; height: 8px; border-radius: 999px; width: ' + (r[2] / max * 100) + '%; background: ' + c.bar,
+      change: r[3] === 0 ? 'New' : (r[3] > 0 ? '↑ ' : '↓ ') + Math.abs(r[3]) + '%',
+      changeStyle: 'font-size: 13px; font-weight: 600; color: ' + (r[3] === 0 ? c.muted : r[3] > 0 ? c.up : c.down)
+    }));
+    const titles = { all: 'All sources', Search: 'Search engines', Social: 'Social networks', Site: 'Other sites', Direct: 'No referrer' };
+    return {
+      c, dark, light: !dark, pro, planned, groups, rows, listTitle: titles[kind],
+      themeLabel: dark ? 'Switch to light theme' : 'Switch to dark theme',
+      toggleTheme: () => this.setState({ dark: !dark })
+    };
+  }
+}
+</script>
+</body>
+</html>

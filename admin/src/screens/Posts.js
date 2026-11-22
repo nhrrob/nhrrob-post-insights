@@ -8,13 +8,15 @@ import { __, sprintf } from '@wordpress/i18n';
 import api from '../api';
 import {
 	Button,
+	Change,
 	External,
+	Icon,
 	Loading,
 	Note,
 	Panel,
 	ScreenHeader,
 } from '../components/ui';
-import { average, byKind, count } from '../format';
+import { average, byKind, change, count, dayLabel } from '../format';
 
 const P = 'nhrrob-post-insights-';
 
@@ -134,6 +136,8 @@ export default function Posts( {
 			</div>
 		);
 	} else if ( table ) {
+		const most = Math.max( 1, ...table.posts.map( ( row ) => row.views ) );
+
 		body = (
 			<div className={ P + 'scroll' }>
 				<table className={ P + 'grid' }>
@@ -147,7 +151,10 @@ export default function Posts( {
 							/>
 							<SortHeader
 								id="date"
-								label={ __( 'Date', 'nhrrob-post-insights' ) }
+								label={ __(
+									'Published',
+									'nhrrob-post-insights'
+								) }
 								sort={ sort }
 								onSort={ onSort }
 							/>
@@ -158,6 +165,9 @@ export default function Posts( {
 								onSort={ onSort }
 								number
 							/>
+							<th scope="col" className="is-number">
+								{ __( 'Change', 'nhrrob-post-insights' ) }
+							</th>
 							<SortHeader
 								id="average"
 								label={ __(
@@ -186,35 +196,68 @@ export default function Posts( {
 					<tbody>
 						{ table.posts.map( ( post ) => (
 							<tr key={ post.id }>
-								<td className="is-wrap">
-									<External href={ post.link }>
-										{ post.title }
-									</External>
+								<td className="is-wrap is-title">
 									<button
 										type="button"
-										className={ P + 'edit' }
+										className={ P + 'title' }
 										onClick={ () => onOpen( post ) }
 									>
-										{ __(
-											'Details',
-											'nhrrob-post-insights'
-										) }
+										{ post.title }
 									</button>
-									{ post.edit && (
-										<a
-											className={ P + 'edit' }
-											href={ post.edit }
+									<span className={ P + 'row-links' }>
+										<button
+											type="button"
+											className={ P + 'link' }
+											onClick={ () => onOpen( post ) }
 										>
 											{ __(
-												'Edit',
+												'Details',
 												'nhrrob-post-insights'
 											) }
-										</a>
-									) }
+										</button>
+										{ post.edit && (
+											<a href={ post.edit }>
+												{ __(
+													'Edit',
+													'nhrrob-post-insights'
+												) }
+											</a>
+										) }
+										<External href={ post.link }>
+											{ __(
+												'View',
+												'nhrrob-post-insights'
+											) }
+										</External>
+									</span>
 								</td>
-								<td>{ post.date }</td>
+								<td className="is-nowrap">
+									{ dayLabel( 'M j, Y', post.date ) }
+								</td>
 								<td className="is-number">
 									{ count( post.views ) }
+									<span
+										className={ P + 'meter__track' }
+										aria-hidden="true"
+									>
+										<span
+											style={ {
+												width:
+													( post.views / most ) *
+														100 +
+													'%',
+											} }
+										/>
+									</span>
+								</td>
+								<td className="is-number">
+									<Change
+										dash
+										change={ change(
+											post.views,
+											post.before
+										) }
+									/>
 								</td>
 								<td className="is-number">
 									{ average( post.seconds, post.views ) }
@@ -254,7 +297,6 @@ export default function Posts( {
 			{ range }
 			<Panel
 				title={ __( 'All posts', 'nhrrob-post-insights' ) }
-				icon="posts"
 				meta={
 					table
 						? sprintf(
@@ -265,20 +307,26 @@ export default function Posts( {
 						: undefined
 				}
 				actions={
-					<input
-						type="search"
-						className={ P + 'input ' + P + 'input--inline' }
-						placeholder={ __(
-							'Search titles',
-							'nhrrob-post-insights'
-						) }
-						aria-label={ __(
-							'Search titles',
-							'nhrrob-post-insights'
-						) }
-						value={ words }
-						onChange={ ( e ) => setWords( e.target.value ) }
-					/>
+					<label
+						className={ P + 'control ' + P + 'search' }
+						htmlFor={ P + 'search' }
+					>
+						<Icon name="search" size={ 16 } />
+						<input
+							id={ P + 'search' }
+							type="search"
+							placeholder={ __(
+								'Search titles',
+								'nhrrob-post-insights'
+							) }
+							aria-label={ __(
+								'Search titles',
+								'nhrrob-post-insights'
+							) }
+							value={ words }
+							onChange={ ( e ) => setWords( e.target.value ) }
+						/>
+					</label>
 				}
 				flush
 			>

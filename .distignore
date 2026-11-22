@@ -1,5 +1,6 @@
 # System files
 .ai/
+docs/
 CLAUDE.md
 .sass-cache
 .DS_Store

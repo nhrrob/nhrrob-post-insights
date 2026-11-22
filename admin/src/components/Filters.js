@@ -4,7 +4,7 @@
  */
 import { __, sprintf } from '@wordpress/i18n';
 
-import { Button } from './ui';
+import { Icon } from './ui';
 
 const P = 'nhrrob-post-insights-';
 
@@ -18,7 +18,7 @@ export const RANGES = [ 7, 30, 90, 0 ];
  * @param {number} offset Days to add, negative to go back.
  * @return {string} Y-m-d.
  */
-function shift( day, offset ) {
+export function shift( day, offset ) {
 	const [ y, m, d ] = day.split( '-' ).map( Number );
 
 	return new Date( Date.UTC( y, m - 1, d + offset ) )
@@ -31,10 +31,11 @@ function shift( day, offset ) {
  * @param {Object}   props.filters  days, from, to and type.
  * @param {Array}    props.types    Post types, each with name and label.
  * @param {string}   props.today    The site's today, Y-m-d.
+ * @param {string}   props.note     What the numbers are compared with.
  * @param {Function} props.onChange Called with the filters that change.
  * @return {Object} Filter row.
  */
-export default function Filters( { filters, types, today, onChange } ) {
+export default function Filters( { filters, types, today, note, onChange } ) {
 	const { days, from, to, type } = filters;
 	const custom = '' !== from;
 
@@ -45,46 +46,48 @@ export default function Filters( { filters, types, today, onChange } ) {
 		value && onChange( { to: value, from: value < from ? value : from } );
 
 	return (
-		<div
-			className={ P + 'range' }
-			role="group"
-			aria-label={ __( 'Filters', 'nhrrob-post-insights' ) }
-		>
-			{ RANGES.map( ( option ) => (
-				<Button
-					key={ option }
-					small
-					variant={ ! custom && option === days ? 'soft' : 'ghost' }
-					aria-pressed={ ! custom && option === days }
-					onClick={ () =>
-						onChange( { days: option, from: '', to: '' } )
-					}
-				>
-					{ option
-						? sprintf(
-								/* translators: %d: number of days. */
-								__( 'Last %d days', 'nhrrob-post-insights' ),
-								option
-						  )
-						: __( 'All time', 'nhrrob-post-insights' ) }
-				</Button>
-			) ) }
-			<Button
-				small
-				variant={ custom ? 'soft' : 'ghost' }
+		<div className={ P + 'filters' }>
+			<div
+				className={ P + 'segment' }
+				role="group"
+				aria-label={ __( 'Days', 'nhrrob-post-insights' ) }
+			>
+				{ RANGES.map( ( option ) => (
+					<button
+						key={ option }
+						type="button"
+						aria-pressed={ ! custom && option === days }
+						onClick={ () =>
+							onChange( { days: option, from: '', to: '' } )
+						}
+					>
+						{ option
+							? sprintf(
+									/* translators: %d: number of days. */
+									__( '%d days', 'nhrrob-post-insights' ),
+									option
+							  )
+							: __( 'All time', 'nhrrob-post-insights' ) }
+					</button>
+				) ) }
+			</div>
+			<button
+				type="button"
+				className={ P + 'control' }
 				aria-pressed={ custom }
 				onClick={ () =>
 					custom ||
 					onChange( { from: shift( today, -29 ), to: today } )
 				}
 			>
-				{ __( 'Custom range', 'nhrrob-post-insights' ) }
-			</Button>
+				<Icon name="calendar" size={ 16 } />
+				{ __( 'Custom dates', 'nhrrob-post-insights' ) }
+			</button>
 			{ custom && (
-				<span className={ P + 'range__dates' }>
+				<span className={ P + 'filters__dates' }>
 					<input
 						type="date"
-						className={ P + 'input ' + P + 'input--inline' }
+						className={ P + 'control' }
 						aria-label={ __( 'First day', 'nhrrob-post-insights' ) }
 						value={ from }
 						max={ today }
@@ -93,7 +96,7 @@ export default function Filters( { filters, types, today, onChange } ) {
 					<span aria-hidden="true">–</span>
 					<input
 						type="date"
-						className={ P + 'input ' + P + 'input--inline' }
+						className={ P + 'control' }
 						aria-label={ __( 'Last day', 'nhrrob-post-insights' ) }
 						value={ to }
 						max={ today }
@@ -102,22 +105,31 @@ export default function Filters( { filters, types, today, onChange } ) {
 				</span>
 			) }
 			{ types.length > 1 && (
-				<select
-					className={ P + 'input ' + P + 'input--inline' }
-					aria-label={ __( 'Post type', 'nhrrob-post-insights' ) }
-					value={ type }
-					onChange={ ( e ) => onChange( { type: e.target.value } ) }
+				<label
+					className={ P + 'filters__label' }
+					htmlFor={ P + 'type' }
 				>
-					<option value="">
-						{ __( 'All types', 'nhrrob-post-insights' ) }
-					</option>
-					{ types.map( ( option ) => (
-						<option key={ option.name } value={ option.name }>
-							{ option.label }
+					{ __( 'Type', 'nhrrob-post-insights' ) }
+					<select
+						id={ P + 'type' }
+						className={ P + 'control' }
+						value={ type }
+						onChange={ ( e ) =>
+							onChange( { type: e.target.value } )
+						}
+					>
+						<option value="">
+							{ __( 'All types', 'nhrrob-post-insights' ) }
 						</option>
-					) ) }
-				</select>
+						{ types.map( ( option ) => (
+							<option key={ option.name } value={ option.name }>
+								{ option.label }
+							</option>
+						) ) }
+					</select>
+				</label>
 			) }
+			{ note && <span className={ P + 'filters__note' }>{ note }</span> }
 		</div>
 	);
 }

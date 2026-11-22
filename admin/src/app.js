@@ -3,13 +3,14 @@
  * they select.
  */
 import { useState, useEffect } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 
 import api from './api';
 import AppShell from './components/AppShell';
-import Filters, { RANGES } from './components/Filters';
+import Filters, { RANGES, shift } from './components/Filters';
 import { ToastProvider } from './components/ToastProvider';
 import { Loading, Note } from './components/ui';
+import { dayLabel } from './format';
 import Overview from './screens/Overview';
 import Post from './screens/Post';
 import Posts from './screens/Posts';
@@ -107,12 +108,62 @@ export default function App( { boot } ) {
 		{ id: 'referrers', label: __( 'Referrers', 'nhrrob-post-insights' ) },
 	];
 	const Screen = post ? Post : SCREENS[ active ];
+	const navigate = ( id ) => {
+		setPost( null );
+		setActive( id );
+	};
+
+	// What the numbers are compared with: the same number of days before,
+	// or nothing for all time.
+	let note = '';
+	let against = '';
+	if ( data && data.days.length ) {
+		const first = data.days[ 0 ].day;
+		const n = data.days.length;
+
+		if ( data.previous ) {
+			note = sprintf(
+				/* translators: 1: first day, 2: last day. */
+				__( 'Compared with %1$s – %2$s', 'nhrrob-post-insights' ),
+				dayLabel( 'M j', shift( first, -n ) ),
+				dayLabel( 'M j', shift( first, -1 ) )
+			);
+			against =
+				1 === n
+					? __( 'vs the day before', 'nhrrob-post-insights' )
+					: sprintf(
+							/* translators: %d: number of days, more than one. */
+							_n(
+								'vs the %d day before',
+								'vs the %d days before',
+								n,
+								'nhrrob-post-insights'
+							),
+							n
+					  );
+		} else {
+			note = sprintf(
+				/* translators: %s: a day. */
+				__(
+					'Since %s, the first day with a view',
+					'nhrrob-post-insights'
+				),
+				dayLabel( 'M j, Y', first )
+			);
+			against = sprintf(
+				/* translators: %s: a day. */
+				__( 'since %s', 'nhrrob-post-insights' ),
+				dayLabel( 'M j', first )
+			);
+		}
+	}
 
 	const range = (
 		<Filters
 			filters={ filters }
 			types={ boot.types || [] }
 			today={ boot.today }
+			note={ note }
 			onChange={ change }
 		/>
 	);
@@ -125,6 +176,8 @@ export default function App( { boot } ) {
 			<Screen
 				data={ data }
 				range={ range }
+				against={ against }
+				onNavigate={ navigate }
 				query={ query }
 				search={ filters.search }
 				onSearch={ ( search ) => change( { search } ) }
@@ -141,10 +194,7 @@ export default function App( { boot } ) {
 			<AppShell
 				modules={ modules }
 				active={ active }
-				onNavigate={ ( id ) => {
-					setPost( null );
-					setActive( id );
-				} }
+				onNavigate={ navigate }
 				title={
 					boot.pluginName ||
 					__( 'Post Insights', 'nhrrob-post-insights' )

@@ -1,40 +1,61 @@
-# DESIGN — Report Issue admin app
+# DESIGN — Post Insights admin app
 
-> Dev-only document. Implemented in `admin/src/style.scss` (tokens) and `admin/src/components/ui.js` (primitives).
+> Dev-only document. Implemented in `admin/src/style.scss` (tokens and layout) and `admin/src/components/` (primitives). The chosen mockups are in `docs/design/` (option A of issue #19, chosen on 2026-11-20).
 
 ## 1. Direction
 
-A sibling of the Secure and Database Cleaner apps: the same shell (gradient app bar, collapsible left nav, one screen per section), the same token structure and the same primitives. Its accent is **graphite**, the colour of GitHub's own chrome, so it is related to the other two but not confused with them, and it stays quiet: the semantic colours carry state, links are blue. wp-admin density and the system font stack. No framework, no icon font, no images: CSS custom properties and inline SVG only.
+A sibling of Secure, Database Cleaner and Social Share: the same shell (gradient app bar, left menu, one screen per section), wp-admin density and the system font stack. Its one accent is **teal**, used for the app bar, the active menu item, the chosen range, the bars and links, so it is related to the others (Social Share is indigo) but not confused with them. No framework, no icon font, no chart library: CSS custom properties and inline SVG only.
 
-The name shown in the UI is **Report Issue**. "NHR" never appears.
+The name shown in the UI is **Post Insights**. "NHR" never appears.
 
-## 2. Tokens (`.nhrrob-post-insights-app`)
+## 2. Tokens (`.nhrrob-post-insights-app`, prefix `--ir-`)
 
 | Token | Light | Dark | Use |
 |---|---|---|---|
-| `--ir-primary` | `#32383f` | `#adb6c0` | focus ring, panel icons |
-| `--ir-primary-600` | `#0969da` | `#58a6ff` | links, soft-button text |
-| `--ir-grad-a` → `--ir-grad-b` | `#24292f` → `#57606a` | `#2b3138` → `#4a535d` | app bar, active nav, primary button |
-| `--ir-soft` | `#eaeef2` | `#21262d` | soft button, hover |
-| `--ir-success` / `--ir-warning` / `--ir-danger` / `--ir-info` (+ `-bg`) | as in Secure | as in Secure | open, token missing, errors, notes |
-| `--ir-surface` / `--ir-bg` / `--ir-sunken` | `#fff` / `#f6f8fa` / `#eef1f4` | `#161b22` / `#0d1117` / `#10151c` | panel / page / table head |
-| `--ir-border` / `-strong` | `#e1e5ea` / `#cfd6dd` | `#262d36` / `#363e48` | |
-| `--ir-text` / `--ir-muted` | `#1f2328` / `#59636e` | `#e6edf3` / `#9198a1` | |
+| `--ir-accent` / `--ir-on-accent` | `#0f766e` / `#fff` | `#5eead4` / `#04201c` | links, chosen range, active menu text, focus ring |
+| `--ir-accent-soft` | `#e3f3f0` | `#123430` | active menu item, chosen card |
+| `--ir-tint` | `#e8f5f2` | `#123430` | the bar behind a ranked row |
+| `--ir-grad-a` → `--ir-grad-b` | `#0d5c56` → `#13877b` | `#0c3532` → `#155e57` | app bar |
+| `--ir-bar` / `--ir-bar-active` | `#14857a` / `#0b4f4a` | `#2dd4bf` / `#99f6e4` | chart bars and meters, the hovered bar |
+| `--ir-up` / `--ir-down` | `#107a4c` / `#b3261e` | `#4ade80` / `#f87171` | a change up or down; always with an arrow, never colour alone |
+| `--ir-surface` / `--ir-bg` / `--ir-sunken` | `#fff` / `#f6f8f8` / `#f6f8f8` | `#161c1e` / `#0f1415` / `#11171a` | panel / app / table head |
+| `--ir-track` / `--ir-grid` | `#edf1f0` / `#edf1f0` | `#222b2e` / `#1f282a` | empty part of a meter, gridlines |
+| `--ir-border` / `-strong` | `#dfe5e4` / `#c3cecc` | `#263033` / `#3a4648` | |
+| `--ir-text` / `--ir-muted` | `#1d2327` / `#55606a` | `#e6edf0` / `#9aa6ab` | muted passes 4.5:1 on the surface |
 
-**Dark theme:** the same tokens redefined under `@media (prefers-color-scheme: dark)` guarded by `:not([data-theme="light"])`, and again under `[data-theme="dark"]`, so the app-bar toggle wins both ways. Dark mode darkens the whole screen: `html:has(.nhrrob-post-insights-app…)` paints wp-admin's page canvas and footer. The choice is remembered in `localStorage` (`nhrrob-post-insights-theme`); the nav state in `nhrrob-post-insights-nav`.
+**Dark theme:** the tokens are redefined under `@media (prefers-color-scheme: dark)` guarded by `:not([data-theme="light"])`, and again under `[data-theme="dark"]`, so the app-bar switch wins both ways. `html:has(...)` paints wp-admin's canvas (`#0b0f10`). The choice is kept in `localStorage` (`nhrrob-post-insights-theme`).
 
-## 3. Components
+**Type:** screen title 22px/600; panel title 15px/600; headline number 28px/600 with tabular figures; labels and notes 13px muted; hosts in the mono stack.
 
-Panel, Pill (`ok | warn | bad | info | off`, always with a dot), Button (`primary | soft | ghost | danger`, `small`), Field (label, control, help), Note (`info | warn`), Grid (table with an uppercase header on a sunken band), External (a link that opens GitHub in a new tab, with an arrow icon), Toast bottom-right (success 3 s, errors 12 s).
+## 3. Layout
 
-## 4. Screens
+- **App bar**: the mark, "Post Insights", the theme switch (44px target).
+- **Left menu**, 196px: Overview, Posts, Referrers, then the line "No cookies, no visitor's address. Nothing leaves this site." Below 782px it becomes a row above the content and the line is hidden.
+- **Screen head**: the title, with its one-line explanation on the right.
+- **Filter row**, the same on every screen: the days as one segmented control (7 days, 30 days, 90 days, All time), Custom dates, Type (when there is more than one type), and on the right what the numbers are compared with ("Compared with Sep 22 – Oct 21", or "Since May 5, 2026, the first day with a view").
 
-- **Report**: the form on the left; on the right "Where it goes" (the repository, and a reminder that a public repository is public) and "Similar open issues" (filled when the title field is left). One primary button.
-- **Sent**: a table of issues with a state pill and "Check states". The nav item shows the number of open ones.
-- **Settings** (separated in the nav): the token with a pill saying where it is stored, and one row per plugin whose repository saves when the field is left. No Save button for repositories.
+## 4. Components
 
-Below 960px the Report screen is one column; below 782px the nav becomes a row above the content.
+- **Kpi**: label, the number, then the change against the same number of days before ("↑ 8% vs the 30 days before"), or "since …" for all time. Four on Overview: Views, Average time on a post, Posts read, From other sites. One post has three (no Posts read).
+- **Panel**: a head (title, a muted note, actions), the body, an optional foot link ("All posts →").
+- **DayChart**: a scale of 4 or 5 round steps, dashed gridlines, a solid base line, five dates under it. Each bar is a button: hover or focus shows its number and day in a tip. Up to 90 days a bar is a day; longer a week, past two years a month, and the panel title says which.
+- **BarList**: a ranked list with a tinted bar behind each row, as long as its share of the largest: Most read posts, Where readers came from.
+- **Change**: the change, green up, red down, muted for "New" or "No change"; a dash in a table when there is nothing to compare.
+- **Tag**: a small rounded label for a source's kind (Search, Social, Site, Direct).
+- **Grid**: a table with a sunken head row, 48px rows, numbers right-aligned with tabular figures.
+- Button, Note, Loading, External link and Toast as before.
 
-## 5. Copy
+## 5. Screens
 
-Plain words from the site owner's side. Say what will be sent and where. Errors say what went wrong and what to do next ("The token cannot open issues in this repository. Check that…").
+- **Overview**: the filter row, four Kpis, the views chart, then Most read posts (a row opens that post) and Where readers came from side by side, then **From your other plugins**: the add-on tiles as a list of label and value, kept apart from the range's numbers because an add-on may count all time.
+- **Posts**: the table of every published post: Post (title opens it; Details, Edit, View under it), Published, Views with a meter, Change, Average time, then the add-on columns. Search titles in the panel head; pages under it.
+- **One post**: "← All posts", the title, published date and View post / Edit, the filter row, three Kpis, the chart and its sources side by side.
+- **Referrers**: five cards that narrow the list (All sources, Search, Social, Other sites, No referrer), each with its share and views, then one ranked table: rank, source, kind, share with a meter, views, change. The kind is told from the host name in `admin/src/sources.js`.
+
+## 6. Pro
+
+Pro adds to this app, never a separate UI (the Pro repo's PRD): a "Pro" group in the left menu (Reading, Read next), tabs on one post (Reading map, Read next), columns through the columns hook and a Kpi. Without Pro none of it shows, and nothing in the free plugin mentions Pro. The menu and tabs need the JS extension point listed in the Pro repo's to-do.
+
+## 7. Copy
+
+Plain words from the site owner's side. Say what is counted and what is not. Every number says the days it covers.
