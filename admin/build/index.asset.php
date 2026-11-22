@@ -4,7 +4,8 @@
 		'wp-api-fetch',
 		'wp-date',
 		'wp-element',
+		'wp-hooks',
 		'wp-i18n'
 	),
-	'version' => '61b9688d10e327c2657e'
+	'version' => '807d8641c43f08b82b2c'
 );

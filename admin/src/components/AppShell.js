@@ -2,7 +2,7 @@
  * App shell: the app bar with the theme switch, the left menu and the
  * content. Below 782px the menu becomes a row above the content.
  */
-import { useState, useEffect } from '@wordpress/element';
+import { Fragment, useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 import { Icon } from './ui';
@@ -75,23 +75,31 @@ export default function AppShell( {
 
 			<div className={ P + 'body' }>
 				<nav className={ P + 'nav' } aria-label={ title }>
-					{ modules.map( ( m ) => (
-						<button
-							key={ m.id }
-							type="button"
-							className={
-								P +
-								'nav__item' +
-								( m.id === active ? ' is-active' : '' )
-							}
-							aria-current={
-								m.id === active ? 'page' : undefined
-							}
-							onClick={ () => onNavigate( m.id ) }
-						>
-							<Icon name={ m.id } />
-							{ m.label }
-						</button>
+					{ modules.map( ( m, i ) => (
+						<Fragment key={ m.id }>
+							{ m.group &&
+								m.group !==
+									( modules[ i - 1 ] || {} ).group && (
+									<p className={ P + 'nav__group' }>
+										{ m.group }
+									</p>
+								) }
+							<button
+								type="button"
+								className={
+									P +
+									'nav__item' +
+									( m.id === active ? ' is-active' : '' )
+								}
+								aria-current={
+									m.id === active ? 'page' : undefined
+								}
+								onClick={ () => onNavigate( m.id ) }
+							>
+								{ m.icon || <Icon name={ m.id } /> }
+								{ m.label }
+							</button>
+						</Fragment>
 					) ) }
 					<p className={ P + 'nav__note' }>
 						{ __(

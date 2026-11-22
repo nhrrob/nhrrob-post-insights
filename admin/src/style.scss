@@ -219,6 +219,13 @@ html:has(.#{$p}-app[data-theme='dark']) #wpfooter {
 		}
 	}
 
+	&__group {
+		margin: 16px 12px 4px !important;
+		font-size: 12px !important;
+		font-weight: 600;
+		color: var(--ir-muted);
+	}
+
 	&__note {
 		margin: 24px 12px 0 !important;
 		font-size: 12px !important;
@@ -324,6 +331,10 @@ html:has(.#{$p}-app[data-theme='dark']) #wpfooter {
 			font-weight: 600;
 		}
 	}
+}
+
+.#{$p}-tabs {
+	margin-bottom: 16px;
 }
 
 .#{$p}-app .#{$p}-control {
@@ -1014,7 +1025,8 @@ html:has(.#{$p}-app[data-theme='dark']) #wpfooter {
 		border-right: 0;
 		border-bottom: 1px solid var(--ir-border);
 
-		&__note {
+		&__note,
+		&__group {
 			display: none;
 		}
 	}

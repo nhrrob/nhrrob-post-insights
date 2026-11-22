@@ -2,7 +2,8 @@
  * Root component: app shell, section routing, the filters and the numbers
  * they select.
  */
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect, useMemo } from '@wordpress/element';
+import { applyFilters } from '@wordpress/hooks';
 import { __, _n, sprintf } from '@wordpress/i18n';
 
 import api from './api';
@@ -16,7 +17,6 @@ import Post from './screens/Post';
 import Posts from './screens/Posts';
 import Referrers from './screens/Referrers';
 
-const SCREENS = { overview: Overview, posts: Posts, referrers: Referrers };
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
 
 /**
@@ -102,12 +102,41 @@ export default function App( { boot } ) {
 		window.history.replaceState( null, '', url );
 	}, [ filters ] );
 
-	const modules = [
-		{ id: 'overview', label: __( 'Overview', 'nhrrob-post-insights' ) },
-		{ id: 'posts', label: __( 'Posts', 'nhrrob-post-insights' ) },
-		{ id: 'referrers', label: __( 'Referrers', 'nhrrob-post-insights' ) },
-	];
-	const Screen = post ? Post : SCREENS[ active ];
+	// The screens of the left menu. An add-on adds its own through this
+	// filter: { id, label, component }, and optionally `group` (a heading in
+	// the menu) and `icon` (an element). An entry without them is dropped.
+	const modules = useMemo(
+		() =>
+			applyFilters( 'nhrrobPostInsights.screens', [
+				{
+					id: 'overview',
+					label: __( 'Overview', 'nhrrob-post-insights' ),
+					component: Overview,
+				},
+				{
+					id: 'posts',
+					label: __( 'Posts', 'nhrrob-post-insights' ),
+					component: Posts,
+				},
+				{
+					id: 'referrers',
+					label: __( 'Referrers', 'nhrrob-post-insights' ),
+					component: Referrers,
+				},
+			] ).filter(
+				( m, i, all ) =>
+					m &&
+					m.id &&
+					m.label &&
+					'function' === typeof m.component &&
+					all.findIndex( ( o ) => o && o.id === m.id ) === i
+			),
+		[]
+	);
+	const Screen = post
+		? Post
+		: ( modules.find( ( m ) => m.id === active ) || modules[ 0 ] )
+				.component;
 	const navigate = ( id ) => {
 		setPost( null );
 		setActive( id );

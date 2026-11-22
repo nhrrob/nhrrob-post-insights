@@ -160,5 +160,15 @@ class Admin {
 			wp_enqueue_style( $handle, $url . '/style-index.css', [], (string) filemtime( $dir . '/style-index.css' ) );
 			wp_style_add_data( $handle, 'rtl', 'replace' );
 		}
+
+		/**
+		 * After the app is enqueued on its screen: an add-on enqueues the script
+		 * that adds its screens and tabs (the JS filters
+		 * `nhrrobPostInsights.screens` and `nhrrobPostInsights.postTabs`). The
+		 * app starts on DOMContentLoaded, so a footer script is in time.
+		 *
+		 * @param string $handle The app's script handle.
+		 */
+		do_action( 'nhrrob_post_insights_enqueue', $handle );
 	}
 }
