@@ -4,7 +4,7 @@ Tags: analytics, statistics, post views, referrers, privacy
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.4.0
+Stable tag: 0.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -47,6 +47,13 @@ Visitors who block scripts are not counted, and neither are crawlers, your own v
 Its two tables and its one option.
 
 == Changelog ==
+
+= 0.5.0 =
+* New screens: one teal look in light and dark, with a theme switch.
+* Overview shows views, average time, posts read and views from other sites, each with its change against the same number of days before, a chart with a scale and the number of each bar, and the most read posts and sources side by side.
+* Posts has a Change column; the title opens the post.
+* Referrers groups the sources into search, social, other sites and no referrer.
+* The stats route returns `read` and `previous`, and each row of the posts route `before`.
 
 = 0.4.0 =
 * Filters on every screen: a custom range of days next to 7, 30, 90 days and all time, and the post type.
