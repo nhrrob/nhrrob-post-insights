@@ -42,6 +42,7 @@ vendor/dealerdirect/    export-ignore
 .editorconfig           export-ignore
 .eslintignore           export-ignore
 .eslintrc               export-ignore
+.eslintrc.js            export-ignore
 .git                    export-ignore
 .github                 export-ignore
 .gitattributes          export-ignore
