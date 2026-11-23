@@ -2,7 +2,7 @@
  * Root component: app shell, section routing, the filters and the numbers
  * they select.
  */
-import { useState, useEffect, useMemo } from '@wordpress/element';
+import { useState, useEffect, useMemo, useRef } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import { __, _n, sprintf } from '@wordpress/i18n';
 
@@ -69,8 +69,13 @@ export default function App( { boot } ) {
 	const [ filters, setFilters ] = useState( fromAddress );
 	// The post opened from the Posts table, or null for the whole site.
 	const [ post, setPost ] = useState( null );
-	const [ data, setData ] = useState( null );
+	// The numbers on screen and the post they are for. They stay while newer
+	// ones load, so the screen neither empties nor changes height.
+	const [ shown, setShown ] = useState( null );
+	const [ busy, setBusy ] = useState( true );
 	const [ failed, setFailed ] = useState( '' );
+	const top = useRef( null );
+	const data = shown ? shown.data : null;
 
 	const change = ( patch ) =>
 		setFilters( ( current ) => ( { ...current, ...patch } ) );
@@ -83,11 +88,21 @@ export default function App( { boot } ) {
 	const query = args.toString();
 
 	useEffect( () => {
+		// An answer that comes after a newer request was made is dropped.
+		let current = true;
+
 		setFailed( '' );
-		setData( null );
+		setBusy( true );
 		api( '/stats?' + query + ( post ? '&post=' + post.id : '' ) )
-			.then( setData )
-			.catch( ( e ) => setFailed( e.message || String( e ) ) );
+			.then(
+				( numbers ) => current && setShown( { data: numbers, post } )
+			)
+			.catch( ( e ) => current && setFailed( e.message || String( e ) ) )
+			.finally( () => current && setBusy( false ) );
+
+		return () => {
+			current = false;
+		};
 	}, [ query, post ] );
 
 	useEffect( () => {
@@ -133,12 +148,23 @@ export default function App( { boot } ) {
 			),
 		[]
 	);
-	const Screen = post
-		? Post
-		: ( modules.find( ( m ) => m.id === active ) || modules[ 0 ] )
-				.component;
+	const Screen =
+		shown && shown.post
+			? Post
+			: ( modules.find( ( m ) => m.id === active ) || modules[ 0 ] )
+					.component;
+	// A new screen starts at the top of the app, when that is out of view.
+	const toTop = () => {
+		if ( top.current && top.current.getBoundingClientRect().top < 0 ) {
+			window.scrollTo( 0, 0 );
+		}
+	};
+	const open = ( next ) => {
+		setPost( next );
+		toTop();
+	};
 	const navigate = ( id ) => {
-		setPost( null );
+		open( null );
 		setActive( id );
 	};
 
@@ -211,9 +237,9 @@ export default function App( { boot } ) {
 				search={ filters.search }
 				onSearch={ ( search ) => change( { search } ) }
 				extra={ boot.extra || {} }
-				post={ post }
-				onOpen={ setPost }
-				onClose={ () => setPost( null ) }
+				post={ shown.post }
+				onOpen={ open }
+				onClose={ () => open( null ) }
 			/>
 		);
 	}
@@ -229,7 +255,13 @@ export default function App( { boot } ) {
 					__( 'Post Insights', 'nhrrob-post-insights' )
 				}
 			>
-				{ content }
+				<div
+					ref={ top }
+					className="nhrrob-post-insights-view"
+					aria-busy={ busy || undefined }
+				>
+					{ content }
+				</div>
 			</AppShell>
 		</ToastProvider>
 	);

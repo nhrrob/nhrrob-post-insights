@@ -969,6 +969,20 @@ html:has(.#{$p}-app[data-theme='dark']) #wpfooter {
 	}
 }
 
+/* Numbers being replaced stay, dimmed only when the answer is slow. */
+.#{$p}-view {
+	transition: opacity 0.15s;
+
+	&[aria-busy='true'] {
+		opacity: 0.6;
+		transition-delay: 0.2s;
+
+		.#{$p}-view {
+			opacity: 1;
+		}
+	}
+}
+
 .#{$p}-loading {
 	height: 240px;
 	border-radius: 10px;
@@ -1045,5 +1059,9 @@ html:has(.#{$p}-app[data-theme='dark']) #wpfooter {
 @media (prefers-reduced-motion: reduce) {
 	.#{$p}-loading {
 		animation: none;
+	}
+
+	.#{$p}-view {
+		transition: none;
 	}
 }
