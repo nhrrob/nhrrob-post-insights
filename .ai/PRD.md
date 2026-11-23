@@ -40,9 +40,9 @@ Show a site owner how many readers each post gets, where they come from and how 
 - **Protection against a script inflating a counter.** The open routes only add to counters of public posts. A rate limit would need an identifier per visitor.
 - **Deleting old rows.** One row per post per day stays small for years.
 
-## Free, once there is time (moved from the paid list on 2026-11-10)
+## Once there is time
 
-Each of these is free in another WordPress plugin, so under rule 1 of the Pro PRD it cannot be paid. Not planned in a version yet; listed so nothing is sold that others give away. The market check is [the Pro repo's `docs/market.md`](https://github.com/nhrrob/nhrrob-post-insights-pro/blob/main/docs/market.md).
+Not planned in a version yet. Each of these is free in other WordPress plugins too.
 
 - **Category, tag and author filters**, next to the post type (free in Independent Analytics and WP Statistics). This reverses the call on #6.
 - **A view count block and a "most read" block** (free in Koko, Post Views Counter, Top 10).
@@ -51,9 +51,5 @@ Each of these is free in another WordPress plugin, so under rule 1 of the Pro PR
 - **A weekly email** of the week's numbers (free in Post Views Counter, Burst).
 - **Campaign links**: views by `utm_source` and `utm_campaign`, read from the address in the browser (free in SlimStat, WP Statistics).
 - **Devices**: phone, tablet or desktop from the screen width in the browser, never the user agent (free in Independent Analytics, Burst).
-- **Countries** only if it can be done on the site without a GeoIP download (rule 2). Free in Independent Analytics, Burst and others, so it is never paid.
-- **Readers, not only views**: free in Koko, Independent Analytics, Burst, WP Statistics and SlimStat, so it is free or not done at all. Decided on #4.
-
-## Paid version
-
-Every Pro document lives in [nhrrob/nhrrob-post-insights-pro](https://github.com/nhrrob/nhrrob-post-insights-pro) `docs/`: the [Pro PRD](https://github.com/nhrrob/nhrrob-post-insights-pro/blob/main/docs/PRD.md) (what the add-on may carry: Reading Map and Read Next), its decisions and its to-do.
+- **Countries** only if it can be done on the site without a GeoIP download (rule 2). Free in Independent Analytics, Burst and others.
+- **Readers, not only views**: free in Koko, Independent Analytics, Burst, WP Statistics and SlimStat. Decided on #4: a daily salted hash.
