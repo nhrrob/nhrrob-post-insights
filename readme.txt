@@ -4,7 +4,7 @@ Tags: analytics, statistics, post views, referrers, privacy
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.5.0
+Stable tag: 0.5.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,10 @@ Visitors who block scripts are not counted, and neither are crawlers, your own v
 Its two tables and its one option.
 
 == Changelog ==
+
+= 0.5.1 =
+* The same space on both sides of the screen.
+* One database query less on every page, and fewer on the Posts screen.
 
 = 0.5.0 =
 * New screens: one teal look in light and dark, with a theme switch.
