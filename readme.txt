@@ -69,6 +69,7 @@ In the plugin's `admin/src` folder. `admin/build` is made from it with `@wordpre
 = 0.6.0 =
 * The counts are kept in one table instead of two. The rows of the two old tables are moved into it on the first page load after the update, and the old tables are removed. Nothing changes on screen.
 * Another plugin can keep counters of its own kind in the same table, instead of adding tables.
+* Other plugins and themes can read the numbers through `NHRRob\PostInsights\Read` (a post's totals, the most viewed posts, views per referring site) instead of querying the table.
 
 = 0.5.2 =
 * Changing a filter, opening a post or switching screens no longer empties the screen: the numbers stay, dimmed while new ones load, and the page keeps its height.
