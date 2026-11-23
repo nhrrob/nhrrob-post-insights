@@ -29,11 +29,11 @@ class Store {
 		$day = current_time( 'Y-m-d' );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- a counter in the plugin's own table.
-		$wpdb->query( $wpdb->prepare( 'INSERT INTO %i (day, post_id, views, seconds) VALUES (%s, %d, 1, 0) ON DUPLICATE KEY UPDATE views = views + 1', Installer::daily_table(), $day, $post_id ) );
+		$wpdb->query( $wpdb->prepare( "INSERT INTO %i (day, post_id, kind, item, views, seconds) VALUES (%s, %d, %s, '', 1, 0) ON DUPLICATE KEY UPDATE views = views + 1", Installer::table(), $day, $post_id, Installer::POST ) );
 
 		if ( '' !== $host ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- a counter in the plugin's own table.
-			$wpdb->query( $wpdb->prepare( 'INSERT INTO %i (day, post_id, host, views) VALUES (%s, %d, %s, 1) ON DUPLICATE KEY UPDATE views = views + 1', Installer::referrers_table(), $day, $post_id, $host ) );
+			$wpdb->query( $wpdb->prepare( 'INSERT INTO %i (day, post_id, kind, item, views, seconds) VALUES (%s, %d, %s, %s, 1, 0) ON DUPLICATE KEY UPDATE views = views + 1', Installer::table(), $day, $post_id, Installer::HOST, $host ) );
 		}
 
 		/**
@@ -56,7 +56,7 @@ class Store {
 		global $wpdb;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- a counter in the plugin's own table.
-		$wpdb->query( $wpdb->prepare( 'INSERT INTO %i (day, post_id, views, seconds) VALUES (%s, %d, 0, %d) ON DUPLICATE KEY UPDATE seconds = seconds + %d', Installer::daily_table(), current_time( 'Y-m-d' ), $post_id, $seconds, $seconds ) );
+		$wpdb->query( $wpdb->prepare( "INSERT INTO %i (day, post_id, kind, item, views, seconds) VALUES (%s, %d, %s, '', 0, %d) ON DUPLICATE KEY UPDATE seconds = seconds + %d", Installer::table(), current_time( 'Y-m-d' ), $post_id, Installer::POST, $seconds, $seconds ) );
 	}
 
 	/**
@@ -74,7 +74,7 @@ class Store {
 
 		if ( 0 === $days ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- the plugin's own table, indexed by day.
-			$first = (string) $wpdb->get_var( $wpdb->prepare( 'SELECT MIN(day) FROM %i', Installer::daily_table() ) );
+			$first = (string) $wpdb->get_var( $wpdb->prepare( 'SELECT MIN(day) FROM %i WHERE kind = %s', Installer::table(), Installer::POST ) );
 
 			return '' !== $first && $first < $today ? $first : $today;
 		}
@@ -103,12 +103,12 @@ class Store {
 		$days    = (int) round( ( strtotime( $filters['to'] ) - strtotime( $from ) ) / DAY_IN_SECONDS ) + 1;
 		$where   = Filters::where( $filters, $post );
 
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- read from the plugin's own tables for one dashboard request; $where is prepared in Filters::where().
-		$by_day    = $wpdb->get_results( $wpdb->prepare( "SELECT day, SUM(views) AS views, SUM(seconds) AS seconds FROM %i WHERE $where GROUP BY day", Installer::daily_table() ), OBJECT_K );
-		$posts     = $wpdb->get_results( $wpdb->prepare( "SELECT post_id, SUM(views) AS views, SUM(seconds) AS seconds FROM %i WHERE $where GROUP BY post_id ORDER BY views DESC, post_id DESC LIMIT 50", Installer::daily_table() ) );
-		$referrers = $wpdb->get_results( $wpdb->prepare( "SELECT host, SUM(views) AS views FROM %i WHERE $where GROUP BY host ORDER BY views DESC, host ASC LIMIT 50", Installer::referrers_table() ) );
-		$referred  = (int) $wpdb->get_var( $wpdb->prepare( "SELECT SUM(views) FROM %i WHERE $where", Installer::referrers_table() ) );
-		$read      = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(DISTINCT post_id) FROM %i WHERE $where AND views > 0", Installer::daily_table() ) );
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- read from the plugin's own table for one dashboard request; $where is prepared in Filters::where().
+		$by_day    = $wpdb->get_results( $wpdb->prepare( "SELECT day, SUM(views) AS views, SUM(seconds) AS seconds FROM %i WHERE $where AND kind = %s GROUP BY day", Installer::table(), Installer::POST ), OBJECT_K );
+		$posts     = $wpdb->get_results( $wpdb->prepare( "SELECT post_id, SUM(views) AS views, SUM(seconds) AS seconds FROM %i WHERE $where AND kind = %s GROUP BY post_id ORDER BY views DESC, post_id DESC LIMIT 50", Installer::table(), Installer::POST ) );
+		$referrers = $wpdb->get_results( $wpdb->prepare( "SELECT item AS host, SUM(views) AS views FROM %i WHERE $where AND kind = %s GROUP BY item ORDER BY views DESC, item ASC LIMIT 50", Installer::table(), Installer::HOST ) );
+		$referred  = (int) $wpdb->get_var( $wpdb->prepare( "SELECT SUM(views) FROM %i WHERE $where AND kind = %s", Installer::table(), Installer::HOST ) );
+		$read      = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(DISTINCT post_id) FROM %i WHERE $where AND kind = %s AND views > 0", Installer::table(), Installer::POST ) );
 		// phpcs:enable
 
 		$stats = [
@@ -200,14 +200,14 @@ class Store {
 
 		$where = Filters::where( $filters, $post );
 
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, PluginCheck.Security.DirectDB.UnescapedDBParameter -- read from the plugin's own tables for one dashboard request; $where is prepared in Filters::where(), and $in holds one %s per host.
-		$totals   = $wpdb->get_row( $wpdb->prepare( "SELECT SUM(views) AS views, SUM(seconds) AS seconds, COUNT(DISTINCT CASE WHEN views > 0 THEN post_id END) AS readers FROM %i WHERE $where", Installer::daily_table() ) );
-		$referred = (int) $wpdb->get_var( $wpdb->prepare( "SELECT SUM(views) FROM %i WHERE $where", Installer::referrers_table() ) );
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, PluginCheck.Security.DirectDB.UnescapedDBParameter -- read from the plugin's own table for one dashboard request; $where is prepared in Filters::where(), and $in holds one %s per host.
+		$totals   = $wpdb->get_row( $wpdb->prepare( "SELECT SUM(views) AS views, SUM(seconds) AS seconds, COUNT(DISTINCT CASE WHEN views > 0 THEN post_id END) AS readers FROM %i WHERE $where AND kind = %s", Installer::table(), Installer::POST ) );
+		$referred = (int) $wpdb->get_var( $wpdb->prepare( "SELECT SUM(views) FROM %i WHERE $where AND kind = %s", Installer::table(), Installer::HOST ) );
 		$rows     = [];
 
 		if ( $hosts ) {
 			$in   = implode( ', ', array_fill( 0, count( $hosts ), '%s' ) );
-			$rows = $wpdb->get_results( $wpdb->prepare( "SELECT host, SUM(views) AS views FROM %i WHERE $where AND host IN ($in) GROUP BY host", array_merge( [ Installer::referrers_table() ], array_values( $hosts ) ) ) );
+			$rows = $wpdb->get_results( $wpdb->prepare( "SELECT item AS host, SUM(views) AS views FROM %i WHERE $where AND kind = %s AND item IN ($in) GROUP BY item", array_merge( [ Installer::table(), Installer::HOST ], array_values( $hosts ) ) ) );
 		}
 		// phpcs:enable
 
@@ -271,7 +271,7 @@ class Store {
 		'date'    => 'p.post_date',
 		'views'   => 'views',
 		// The sums, not the aliases: inside an expression MySQL reads `views` and
-		// `seconds` as the columns of one row of the daily table.
+		// `seconds` as the columns of one row of the table.
 		'average' => 'CASE WHEN SUM(d.views) > 0 THEN SUM(d.seconds) / SUM(d.views) ELSE 0 END',
 	];
 
@@ -308,9 +308,10 @@ class Store {
 		$rows  = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT p.ID AS id, p.post_date AS date, COALESCE(SUM(d.views), 0) AS views, COALESCE(SUM(d.seconds), 0) AS seconds
-				FROM {$wpdb->posts} p LEFT JOIN %i d ON d.post_id = p.ID AND d.day BETWEEN %s AND %s
+				FROM {$wpdb->posts} p LEFT JOIN %i d ON d.post_id = p.ID AND d.kind = %s AND d.day BETWEEN %s AND %s
 				WHERE $where GROUP BY p.ID ORDER BY $sort $dir, p.ID DESC LIMIT %d OFFSET %d",
-				Installer::daily_table(),
+				Installer::table(),
+				Installer::POST,
 				$filters['from'],
 				$filters['to'],
 				self::PER_PAGE,
@@ -329,7 +330,7 @@ class Store {
 			$in  = implode( ', ', array_fill( 0, count( $ids ), '%d' ) );
 
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- the plugin's own table; $in holds one %d per post.
-			$found = $wpdb->get_results( $wpdb->prepare( "SELECT post_id, SUM(views) AS views FROM %i WHERE day BETWEEN %s AND %s AND post_id IN ($in) GROUP BY post_id", array_merge( [ Installer::daily_table(), $first, $last ], $ids ) ) );
+			$found = $wpdb->get_results( $wpdb->prepare( "SELECT post_id, SUM(views) AS views FROM %i WHERE kind = %s AND day BETWEEN %s AND %s AND post_id IN ($in) GROUP BY post_id", array_merge( [ Installer::table(), Installer::POST, $first, $last ], $ids ) ) );
 
 			$before = array_fill_keys( $ids, 0 );
 

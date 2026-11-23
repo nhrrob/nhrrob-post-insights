@@ -169,7 +169,7 @@ class Filters {
 	}
 
 	/**
-	 * The prepared WHERE of a read from the daily or the referrers table.
+	 * The prepared WHERE of a read from the plugin's table: the days and the post.
 	 *
 	 * @param array $filters Resolved filters: from, to and type.
 	 * @param int   $post    Post ID, or 0 for every post.

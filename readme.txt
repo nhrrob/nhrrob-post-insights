@@ -4,7 +4,7 @@ Tags: analytics, statistics, post views, referrers, privacy
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.5.2
+Stable tag: 0.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,7 +29,7 @@ NHR Post Insights counts the views of your posts and pages and shows them in the
 - Posts that are not published, or that have a password, are not counted.
 
 ### What is stored
-Two small tables hold one number per post per day, and one per post, day and referring site. Of a referrer only the site's name is kept, never the page. No IP address is stored.
+One small table holds the numbers: per post and day, the views and the time; per post, day and referring site, the views. Of a referrer only the site's name is kept, never the page. No IP address is stored.
 
 == External services ==
 This plugin does not connect to any external service.
@@ -51,7 +51,7 @@ The plugin sets no cookie and keeps nothing that identifies a visitor. Whether y
 Visitors who block scripts are not counted, and neither are crawlers, your own views or tabs that were never looked at.
 
 = What is removed when I delete the plugin? =
-Its two tables and its one option.
+Its table and its one option.
 
 = Where is the source of the dashboard's script? =
 In the plugin's `admin/src` folder. `admin/build` is made from it with `@wordpress/scripts` (`npm run build`). The script that counts views, `assets/tracker.js`, is not built.
@@ -65,6 +65,10 @@ In the plugin's `admin/src` folder. `admin/build` is made from it with `@wordpre
 5. The dark theme.
 
 == Changelog ==
+
+= 0.6.0 =
+* The counts are kept in one table instead of two. The rows of the two old tables are moved into it on the first page load after the update, and the old tables are removed. Nothing changes on screen.
+* Another plugin can keep counters of its own kind in the same table, instead of adding tables.
 
 = 0.5.2 =
 * Changing a filter, opening a post or switching screens no longer empties the screen: the numbers stay, dimmed while new ones load, and the page keeps its height.
