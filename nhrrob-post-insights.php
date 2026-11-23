@@ -1,7 +1,6 @@
 <?php
 /**
  * Plugin Name: NHR Post Insights
- * Plugin URI: https://github.com/nhrrob/nhrrob-post-insights
  * Description: How many readers each post gets, where they come from and how long they stay. No cookies, and the numbers stay on your site.
  * Author: Nazmul Hasan Robin
  * Author URI: https://profiles.wordpress.org/nhrrob/

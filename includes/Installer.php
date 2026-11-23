@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Installer {
 
 	const OPTION     = 'nhrrob_post_insights_db_version';
-	const DB_VERSION = '1';
+	const DB_VERSION = '2';
 
 	/**
 	 * Register hooks.
@@ -98,6 +98,7 @@ class Installer {
 			) {$charset};"
 		);
 
-		update_option( self::OPTION, self::DB_VERSION, false );
+		// Autoloaded: it is read on every request.
+		update_option( self::OPTION, self::DB_VERSION, true );
 	}
 }
