@@ -103,7 +103,7 @@ class Store {
 		$days    = (int) round( ( strtotime( $filters['to'] ) - strtotime( $from ) ) / DAY_IN_SECONDS ) + 1;
 		$where   = Filters::where( $filters, $post );
 
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- read from the plugin's own tables for one dashboard request; $where is prepared in Filters::where().
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- read from the plugin's own tables for one dashboard request; $where is prepared in Filters::where().
 		$by_day    = $wpdb->get_results( $wpdb->prepare( "SELECT day, SUM(views) AS views, SUM(seconds) AS seconds FROM %i WHERE $where GROUP BY day", Installer::daily_table() ), OBJECT_K );
 		$posts     = $wpdb->get_results( $wpdb->prepare( "SELECT post_id, SUM(views) AS views, SUM(seconds) AS seconds FROM %i WHERE $where GROUP BY post_id ORDER BY views DESC, post_id DESC LIMIT 50", Installer::daily_table() ) );
 		$referrers = $wpdb->get_results( $wpdb->prepare( "SELECT host, SUM(views) AS views FROM %i WHERE $where GROUP BY host ORDER BY views DESC, host ASC LIMIT 50", Installer::referrers_table() ) );
@@ -128,6 +128,9 @@ class Store {
 		}
 
 		$stats['direct'] = self::direct( $stats['views'], $referred );
+
+		// One query for the posts and one for their meta, not one per row.
+		_prime_post_caches( array_map( 'intval', wp_list_pluck( $posts, 'post_id' ) ), false, true );
 
 		foreach ( $posts as $row ) {
 			$title = get_the_title( (int) $row->post_id );
@@ -197,7 +200,7 @@ class Store {
 
 		$where = Filters::where( $filters, $post );
 
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- read from the plugin's own tables for one dashboard request; $where is prepared in Filters::where(), and $in holds one %s per host.
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, PluginCheck.Security.DirectDB.UnescapedDBParameter -- read from the plugin's own tables for one dashboard request; $where is prepared in Filters::where(), and $in holds one %s per host.
 		$totals   = $wpdb->get_row( $wpdb->prepare( "SELECT SUM(views) AS views, SUM(seconds) AS seconds, COUNT(DISTINCT CASE WHEN views > 0 THEN post_id END) AS readers FROM %i WHERE $where", Installer::daily_table() ) );
 		$referred = (int) $wpdb->get_var( $wpdb->prepare( "SELECT SUM(views) FROM %i WHERE $where", Installer::referrers_table() ) );
 		$rows     = [];
@@ -300,7 +303,7 @@ class Store {
 			$where .= $wpdb->prepare( ' AND p.post_title LIKE %s', '%' . $wpdb->esc_like( $filters['search'] ) . '%' );
 		}
 
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $where is prepared above; $sort and $dir come from fixed lists.
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $where is prepared above; $sort and $dir come from fixed lists.
 		$total = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->posts} p WHERE $where" );
 		$rows  = $wpdb->get_results(
 			$wpdb->prepare(
@@ -336,6 +339,9 @@ class Store {
 		}
 
 		$posts = [];
+
+		// One query for the posts and one for their meta, not one per row.
+		_prime_post_caches( array_map( 'intval', wp_list_pluck( $rows, 'id' ) ), false, true );
 
 		foreach ( $rows as $row ) {
 			$id    = (int) $row->id;

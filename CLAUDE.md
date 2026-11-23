@@ -45,7 +45,7 @@ tests/             PHPUnit + WP_Mock
 |---|---|
 | table `{prefix}nhrrob_post_insights_daily` | `day`, `post_id`, `views`, `seconds`: one row per post per day |
 | table `{prefix}nhrrob_post_insights_referrers` | `day`, `post_id`, `host`, `views`: one row per post, day and referring site |
-| option `nhrrob_post_insights_db_version` | the layout version of the tables, not autoloaded |
+| option `nhrrob_post_insights_db_version` | the layout version of the tables, autoloaded (read on every request); 2 since 0.5.1 only to switch autoload on |
 
 A day is the site's own date (`current_time()`). Average time is `seconds / views` of the same rows.
 

@@ -1,6 +1,6 @@
 {
     "name": "nhrrob/nhrrob-post-insights",
-    "description": "Report an issue with a plugin to its GitHub repository, from the WordPress dashboard.",
+    "description": "How many readers each post gets, where they come from and how long they stay. No cookies, and the numbers stay on the site.",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
     "authors": [

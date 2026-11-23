@@ -16,9 +16,11 @@ NHR Post Insights counts the views of your posts and pages and shows them in the
 ### What it shows
 - **Tools → Post Insights** has three screens, each for the last 7, 30 or 90 days, all time, or a range of days you choose, and for every post type or one.
 - The filters are kept in the address, so a filtered view can be bookmarked.
-- **Overview**: views, the average time on a post, and a chart of views per day.
-- **Posts**: every published post with its views and average time, sortable by title, date, views or average time, with a search of the titles.
-- **Referrers**: the sites readers followed a link from.
+- Each number shows its change against the same number of days before.
+- **Overview**: views, the average time on a post, the posts read and the views from other sites, a chart of views per day (per week or month for long ranges), the most read posts and where readers came from.
+- **Posts**: every published post with its views, their change and average time, sortable by title, date, views or average time, with a search of the titles. A post opens its own screen with its numbers, chart and sources.
+- **Referrers**: the sites readers followed a link from, grouped into search, social, other sites and no referrer, each with its share of the views.
+- A light and a dark look, following the system or chosen in the app.
 
 ### What is counted
 - A view is counted when the page is actually looked at, not when it loads in a background tab.
