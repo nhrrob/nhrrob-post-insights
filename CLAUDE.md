@@ -19,9 +19,9 @@ Public repository, version 0.x, submitted to WordPress.org on 2026-11-23 and in 
 
 ```
 nhrrob-post-insights.php   main class, constants; Installer and Rest always, Admin in the dashboard, Tracker on the front end
-uninstall.php              drops the two tables and deletes the option, per site
+uninstall.php              drops the table (and the two tables of 0.5 and before) and deletes the option, per site
 includes/
-  Installer.php    the two tables, created on activation and when DB_VERSION changes
+  Installer.php    the one table, created on activation and when DB_VERSION changes; moves in the rows of the 0.5 tables once
   Visit.php        which visits count: is_bot(), host(), seconds(), counts()
   Store.php        add_view(), add_seconds(), stats(), posts()
   Filters.php      the dashboard's filters: type, from, to, search; sanitized, the range they resolve to, the WHERE of a read
@@ -47,9 +47,10 @@ tests/             PHPUnit + WP_Mock
 
 | Where | Holds |
 |---|---|
-| table `{prefix}nhrrob_post_insights_daily` | `day`, `post_id`, `views`, `seconds`: one row per post per day |
-| table `{prefix}nhrrob_post_insights_referrers` | `day`, `post_id`, `host`, `views`: one row per post, day and referring site |
-| option `nhrrob_post_insights_db_version` | the layout version of the tables, autoloaded (read on every request); 2 since 0.5.1 only to switch autoload on |
+| table `{prefix}nhrrob_post_insights` (`Installer::table()`) | `day`, `post_id`, `kind`, `item`, `views`, `seconds`, one row per day, post, kind and item. Kind `post` (`Installer::POST`): the post's views and seconds of the day, `item` empty. Kind `host` (`Installer::HOST`): views from one referring site, its host in `item`. Every read names its kind. |
+| option `nhrrob_post_insights_db_version` | the layout version of the table, autoloaded (read on every request). 3 since 0.6.0: one table; the rows of the 0.5 tables `_daily` and `_referrers` are moved in once and those tables dropped |
+
+One table is the rule for this plugin and any add-on: another plugin keeps its counters in this table under a kind of its own (at most 16 characters), never in a table of its own.
 
 A day is the site's own date (`current_time()`). Average time is `seconds / views` of the same rows.
 
@@ -63,6 +64,7 @@ A day is the site's own date (`current_time()`). Average time is `seconds / view
 
 ## Hooks for an add-on
 
+- table `Installer::table()`: an add-on writes and reads rows of its own `kind` there (`Filters::where()` gives the days and the post; add the kind). Uninstalling this plugin drops it.
 - filter `nhrrob_post_insights_capability`: who may see the numbers.
 - filter `nhrrob_post_insights_counts`: whether views of a post are counted.
 - action `nhrrob_post_insights_view`: after a view was counted, with the post ID and the referring host.

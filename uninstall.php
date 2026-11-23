@@ -11,14 +11,15 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 }
 
 /**
- * Remove this plugin's tables and option from the current site.
+ * Remove this plugin's table and option from the current site.
  *
  * @return void
  */
 function nhrrob_post_insights_uninstall_site() {
 	global $wpdb;
 
-	foreach ( [ 'nhrrob_post_insights_daily', 'nhrrob_post_insights_referrers' ] as $nhrrob_post_insights_table ) {
+	// The table, and the two tables of versions before 0.6.
+	foreach ( [ 'nhrrob_post_insights', 'nhrrob_post_insights_daily', 'nhrrob_post_insights_referrers' ] as $nhrrob_post_insights_table ) {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange -- removing the plugin's own tables.
 		$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $wpdb->prefix . $nhrrob_post_insights_table ) );
 	}

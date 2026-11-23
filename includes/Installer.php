@@ -1,6 +1,8 @@
 <?php
 /**
- * The plugin's two tables: created on activation, and again when their layout changes.
+ * The plugin's one table: created on activation, and again when its layout
+ * changes. Up to 0.5 the counts were in two tables, which are moved into it
+ * once and dropped.
  *
  * @package NHRRob\PostInsights
  */
@@ -17,7 +19,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Installer {
 
 	const OPTION     = 'nhrrob_post_insights_db_version';
-	const DB_VERSION = '2';
+	const DB_VERSION = '3';
+
+	/**
+	 * A row's kind: a post's views and seconds of one day; item is empty.
+	 */
+	const POST = 'post';
+
+	/**
+	 * A row's kind: a post's views from one referring site; item is its host.
+	 */
+	const HOST = 'host';
 
 	/**
 	 * Register hooks.
@@ -29,31 +41,21 @@ class Installer {
 	}
 
 	/**
-	 * Name of the table with one row per post per day.
+	 * Name of the table: one row per day, post, kind and item. Another plugin
+	 * may keep counters of its own kind in it.
 	 *
 	 * @return string
 	 */
-	public static function daily_table() {
+	public static function table() {
 		global $wpdb;
 
-		return $wpdb->prefix . 'nhrrob_post_insights_daily';
+		return $wpdb->prefix . 'nhrrob_post_insights';
 	}
 
 	/**
-	 * Name of the table with one row per post, day and referring site.
-	 *
-	 * @return string
-	 */
-	public static function referrers_table() {
-		global $wpdb;
-
-		return $wpdb->prefix . 'nhrrob_post_insights_referrers';
-	}
-
-	/**
-	 * Create the tables when they are missing or older than this version.
-	 * A plugin installed by Composer or copied in is never "activated" again
-	 * on an update, so this also runs on init.
+	 * Create the table when it is missing or older than this version. A
+	 * plugin installed by Composer or copied in is never "activated" again on
+	 * an update, so this also runs on init.
 	 *
 	 * @return void
 	 */
@@ -64,7 +66,7 @@ class Installer {
 	}
 
 	/**
-	 * Create or update the tables.
+	 * Create or update the table, and move in the rows of the old tables.
 	 *
 	 * @return void
 	 */
@@ -73,32 +75,50 @@ class Installer {
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
-		$charset   = $wpdb->get_charset_collate();
-		$daily     = self::daily_table();
-		$referrers = self::referrers_table();
+		$table   = self::table();
+		$charset = $wpdb->get_charset_collate();
 
 		dbDelta(
-			"CREATE TABLE {$daily} (
+			"CREATE TABLE {$table} (
 				day date NOT NULL,
 				post_id bigint(20) unsigned NOT NULL,
+				kind varchar(16) NOT NULL,
+				item varchar(191) NOT NULL DEFAULT '',
 				views int(10) unsigned NOT NULL DEFAULT 0,
 				seconds int(10) unsigned NOT NULL DEFAULT 0,
-				PRIMARY KEY  (day,post_id),
-				KEY post_id (post_id)
+				PRIMARY KEY  (day,post_id,kind,item),
+				KEY post_kind (post_id,kind)
 			) {$charset};"
 		);
 
-		dbDelta(
-			"CREATE TABLE {$referrers} (
-				day date NOT NULL,
-				post_id bigint(20) unsigned NOT NULL,
-				host varchar(191) NOT NULL,
-				views int(10) unsigned NOT NULL DEFAULT 0,
-				PRIMARY KEY  (day,post_id,host)
-			) {$charset};"
-		);
+		self::migrate( $wpdb->prefix . 'nhrrob_post_insights_daily', "SELECT day, post_id, %s, '', views, seconds FROM %i", self::POST );
+		self::migrate( $wpdb->prefix . 'nhrrob_post_insights_referrers', 'SELECT day, post_id, %s, host, views, 0 FROM %i', self::HOST );
 
 		// Autoloaded: it is read on every request.
 		update_option( self::OPTION, self::DB_VERSION, true );
+	}
+
+	/**
+	 * Copy the rows of an old table into the table as one kind, then drop it.
+	 *
+	 * @param string $old    Old table.
+	 * @param string $select SELECT of day, post_id, kind (%s), item, views and seconds from the old table (%i).
+	 * @param string $kind   The rows' kind.
+	 * @return void
+	 */
+	private static function migrate( $old, $select, $kind ) {
+		global $wpdb;
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- moving the plugin's own rows once; $select is one of two fixed strings above.
+		if ( $old !== $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $old ) ) ) ) {
+			return;
+		}
+
+		$copied = $wpdb->query( $wpdb->prepare( 'INSERT IGNORE INTO %i (day, post_id, kind, item, views, seconds) ' . $select, self::table(), $kind, $old ) );
+
+		if ( false !== $copied ) {
+			$wpdb->query( $wpdb->prepare( 'DROP TABLE %i', $old ) );
+		}
+		// phpcs:enable
 	}
 }
