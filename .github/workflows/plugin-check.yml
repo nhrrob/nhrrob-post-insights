@@ -4,7 +4,7 @@ name: Plugin Check
 # .distignore leaves in, with the production autoloader.
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "trunk" ]
 
 jobs:
   plugin-check:

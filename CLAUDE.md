@@ -38,7 +38,8 @@ admin/build/       compiled output (committed, ships)
 tests/             PHPUnit + WP_Mock
 .github/workflows/php.yml   PHPCS, then per PHP version: syntax, unit tests, smoke test
 .github/workflows/plugin-check.yml  WordPress.org's Plugin Check on the zip's files, on every pull request
-.github/workflows/release.yml  when Version changes on main: tag v<version>, a GitHub release with readme.txt's changelog, and the version sent to WordPress.org; a change to readme.txt or .wordpress-org/ alone updates the listing
+.github/workflows/deploy-on-pushing-a-new-tag.yml  a new tag (v<version>) sends that version, with .wordpress-org/, to WordPress.org (10up deploy action); as in Secure
+.github/workflows/deploy-readme-asset-on-pushing-on-trunk.yml  a push to the `trunk` branch updates only readme.txt and .wordpress-org/ on WordPress.org; as in Secure
 .github/ci/smoke.php        calls every GET route inside a real WordPress, fails on any PHP notice
 ```
 
@@ -85,4 +86,10 @@ After a change to `admin/src`, run the lint and the build and commit `admin/buil
 
 ## Releases
 
-Raise `Version` in the header (and the class constant) and `Stable tag`, and add a `= x.y.z =` section under `== Changelog ==` in `readme.txt`. Merging that into `main` runs `release.yml`, which tags `v<version>` and makes the GitHub release. Once the `SVN_USERNAME` and `SVN_PASSWORD` secrets are set (after WordPress.org approves the plugin), the same run sends the version to WordPress.org; until then those steps are skipped. The first time, run the workflow by hand to send the current version. The blog (`nhrrob/nazmulrobin_blog`) requires the plugin by these tags with Composer, so a release reaches it in Dependabot's next pull request.
+Releases are made by hand, as in Secure; nothing is tagged on a version change.
+
+1. On a branch: raise `Version` in the header (and the class constant), `Stable tag` and `package.json`'s `version`, and add a `= x.y.z =` section under `== Changelog ==` in `readme.txt`. Merge it into `main`.
+2. On GitHub, create a release from `main` with a new tag `v<version>` and that version's changelog as its notes. The tag push runs `deploy-on-pushing-a-new-tag.yml`, which sends the version to WordPress.org with the `SVN_USERNAME` and `SVN_PASSWORD` secrets. Until WordPress.org approves the plugin and the secrets are set, that run fails; the tag and release still work for the blog.
+3. To change only the readme or the listing's images, push to `trunk`. Bring `trunk` up to `main` after each release.
+
+The blog (`nhrrob/nazmulrobin_blog`) requires the plugin by these tags with Composer, so a release reaches it in Dependabot's next pull request.
