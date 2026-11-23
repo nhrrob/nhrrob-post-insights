@@ -59,7 +59,9 @@ $p: 'nhrrob-post-insights';
 	--ir-radius: 12px;
 	--ir-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-	margin: 20px 20px 0 0;
+	// Horizontal insets come from .wrap alone, so the space is the same on
+	// both sides, as in Database Cleaner.
+	margin: 20px 0 0;
 	border: 1px solid var(--ir-border);
 	border-radius: var(--ir-radius);
 	overflow: hidden;
@@ -1013,10 +1015,6 @@ html:has(.#{$p}-app[data-theme='dark']) #wpfooter {
 }
 
 @media (max-width: 782px) {
-	.#{$p}-app {
-		margin-right: 10px;
-	}
-
 	.#{$p}-nav {
 		flex: 1 1 100%;
 		flex-direction: row;
