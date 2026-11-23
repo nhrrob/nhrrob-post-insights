@@ -28,6 +28,7 @@ includes/
   Tracker.php      enqueues assets/tracker.js on a single post or page, for visitors
   Rest.php         POST /view and /time (open), GET /stats and /posts (gated)
   Columns.php      the columns and tiles an add-on declares
+  Read.php         stable reads for other plugins: totals, popular, hosts, referrals
   Admin.php        Tools → Post Insights: mount point, enqueue, boot data, Plugins row link, old address redirect
 assets/tracker.js  reports the view and the time in view; plain script, not built
 admin/src/         React source: index.js, app.js, api.js, format.js, sources.js (a referrer's kind), components/ (AppShell, Filters, ui, DayChart, toasts), screens/ (Overview, Posts, Post, Referrers), style.scss
@@ -64,6 +65,7 @@ A day is the site's own date (`current_time()`). Average time is `seconds / view
 
 ## Hooks for an add-on
 
+- class `Read`, for other plugins and themes that only read: `totals( $post_id )` (views, seconds, all time), `popular( $min, $limit )` (post IDs), `hosts( $from, $to )` (host => views), `referrals( $post_ids )` (post_id, day, host, views). They never query the table themselves, so its layout can change; keep these arguments and answers stable, and migrate the data in `Installer` when the layout changes.
 - table `Installer::table()`: an add-on writes and reads rows of its own `kind` there (`Filters::where()` gives the days and the post; add the kind). Uninstalling this plugin drops it.
 - filter `nhrrob_post_insights_capability`: who may see the numbers.
 - filter `nhrrob_post_insights_counts`: whether views of a post are counted.
