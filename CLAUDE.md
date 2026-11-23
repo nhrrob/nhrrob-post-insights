@@ -32,10 +32,13 @@ includes/
 assets/tracker.js  reports the view and the time in view; plain script, not built
 admin/src/         React source: index.js, app.js, api.js, format.js, sources.js (a referrer's kind), components/ (AppShell, Filters, ui, DayChart, toasts), screens/ (Overview, Posts, Post, Referrers), style.scss
 docs/design/       the chosen mockups (Claude design canvas files); not shipped
+docs/wporg/        icon.html and banner.html, the sources of the WordPress.org icon and banners; render.mjs (Playwright) writes them to .wordpress-org/
+.wordpress-org/    WordPress.org listing: icon, banners, screenshot-1 to 5 (captioned in readme.txt's == Screenshots ==); not shipped
 admin/build/       compiled output (committed, ships)
 tests/             PHPUnit + WP_Mock
 .github/workflows/php.yml   PHPCS, then per PHP version: syntax, unit tests, smoke test
-.github/workflows/release.yml  when Version changes on main: tag v<version> and a GitHub release with readme.txt's changelog
+.github/workflows/plugin-check.yml  WordPress.org's Plugin Check on the zip's files, on every pull request
+.github/workflows/release.yml  when Version changes on main: tag v<version>, a GitHub release with readme.txt's changelog, and the version sent to WordPress.org; a change to readme.txt or .wordpress-org/ alone updates the listing
 .github/ci/smoke.php        calls every GET route inside a real WordPress, fails on any PHP notice
 ```
 
@@ -82,4 +85,4 @@ After a change to `admin/src`, run the lint and the build and commit `admin/buil
 
 ## Releases
 
-Raise `Version` in the header (and the class constant) and `Stable tag`, and add a `= x.y.z =` section under `== Changelog ==` in `readme.txt`. Merging that into `main` runs `release.yml`, which tags `v<version>` and makes the GitHub release. The blog (`nhrrob/nazmulrobin_blog`) requires the plugin by these tags with Composer, so a release reaches it in Dependabot's next pull request.
+Raise `Version` in the header (and the class constant) and `Stable tag`, and add a `= x.y.z =` section under `== Changelog ==` in `readme.txt`. Merging that into `main` runs `release.yml`, which tags `v<version>` and makes the GitHub release. Once the `SVN_USERNAME` and `SVN_PASSWORD` secrets are set (after WordPress.org approves the plugin), the same run sends the version to WordPress.org; until then those steps are skipped. The first time, run the workflow by hand to send the current version. The blog (`nhrrob/nazmulrobin_blog`) requires the plugin by these tags with Composer, so a release reaches it in Dependabot's next pull request.

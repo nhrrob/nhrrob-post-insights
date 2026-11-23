@@ -34,6 +34,11 @@ Two small tables hold one number per post per day, and one per post, day and ref
 == External services ==
 This plugin does not connect to any external service.
 
+== Installation ==
+1. In the dashboard, go to Plugins → Add New Plugin and search for "NHR Post Insights", or upload the plugin's zip there.
+2. Activate it. Counting starts with the next view of a post; nothing needs to be set up.
+3. Open Tools → Post Insights, or "View insights" under the plugin on the Plugins screen.
+
 == Frequently Asked Questions ==
 
 = Does it work with a page cache? =
@@ -47,6 +52,17 @@ Visitors who block scripts are not counted, and neither are crawlers, your own v
 
 = What is removed when I delete the plugin? =
 Its two tables and its one option.
+
+= Where is the source of the dashboard's script? =
+In the plugin's `admin/src` folder. `admin/build` is made from it with `@wordpress/scripts` (`npm run build`). The script that counts views, `assets/tracker.js`, is not built.
+
+== Screenshots ==
+
+1. Overview: views, average time on a post, posts read and views from other sites, each against the days before, with views per day, the most read posts and where readers came from.
+2. Posts: every published post with its views, their change and the average time, sortable and searchable.
+3. One post: its own numbers, views per day and sources.
+4. Referrers: sources grouped into search, social, other sites and no referrer, each with its share and change.
+5. The dark theme.
 
 == Changelog ==
 
