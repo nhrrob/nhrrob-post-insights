@@ -65,6 +65,9 @@ A day is the site's own date (`current_time()`). Average time is `seconds / view
 - filter `nhrrob_post_insights_stats`: the numbers before they go to the app, with the days, the post (0 for the whole site) and the resolved filters (`from`, `to`, `type`, `search`, and `custom`: whether the days are a custom range), so an add-on's tiles can follow a custom range or a type. An add-on's tile values go in `extra`, by key; one post's screen shows no add-on tiles.
 - filter `nhrrob_post_insights_columns`: `[ 'columns' => [...], 'tiles' => [...] ]`, each entry `key`, `label`, `kind` (`number`, `time` in seconds, or `text`). `Columns::get()` drops a malformed entry and passes the rest to the app as `nhrrobPostInsightsApp.extra`.
 - filter `nhrrob_post_insights_posts`: the rows of one page of `GET /posts`, with the days and the resolved filters; fill a declared column in each row's `extra`, by key. Only that page's rows, so an add-on never loads every post.
+- action `nhrrob_post_insights_enqueue`: on the app's screen only, after the app's script (handle passed). Enqueue the add-on's script here, depending on `wp-hooks` and `wp-element`; the app starts on `DOMContentLoaded`, so a footer script is in time.
+- JS filter `nhrrobPostInsights.screens`: the left menu's screens, `[ { id, label, component } ]`, optionally `group` (a heading above the add-on's items) and `icon` (an element; without it a placeholder icon). A screen gets the same props as Overview (`data` of `/stats`, `range`, `against`, `query`, `extra`, `onNavigate`, `onOpen`). An entry without an id, label or component, or with an id already used, is dropped.
+- JS filter `nhrrobPostInsights.postTabs`: the tabs of one post's screen, `[ { id, label, component } ]`, with the post as the second argument. The first tab is the post's own numbers; a tab gets the screen's props (`data`, `post`, `range`, `against`, `query`). One tab shows no tab bar.
 
 ## Commands
 

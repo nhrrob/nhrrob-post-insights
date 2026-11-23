@@ -54,7 +54,7 @@ The name shown in the UI is **Post Insights**. "NHR" never appears.
 
 ## 6. Pro
 
-Pro adds to this app, never a separate UI (the Pro repo's PRD): a "Pro" group in the left menu (Reading, Read next), tabs on one post (Reading map, Read next), columns through the columns hook and a Kpi. Without Pro none of it shows, and nothing in the free plugin mentions Pro. The menu and tabs need the JS extension point listed in the Pro repo's to-do.
+Pro adds to this app, never a separate UI (the Pro repo's PRD): a "Pro" group in the left menu (Reading, Read next), tabs on one post (Reading map, Read next), columns through the columns hook and a Kpi. Without Pro none of it shows, and nothing in the free plugin mentions Pro. The menu group and the tabs come through the JS filters `nhrrobPostInsights.screens` and `nhrrobPostInsights.postTabs` (`CLAUDE.md`): a group heading in the left menu, and a segmented tab bar under the filter row on one post ("Numbers" first), shown only when there is more than one tab.
 
 ## 7. Copy
 
