@@ -4,7 +4,7 @@ Tags: analytics, statistics, post views, referrers, privacy
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.5.1
+Stable tag: 0.5.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,6 +65,11 @@ In the plugin's `admin/src` folder. `admin/build` is made from it with `@wordpre
 5. The dark theme.
 
 == Changelog ==
+
+= 0.5.2 =
+* Changing a filter, opening a post or switching screens no longer empties the screen: the numbers stay, dimmed while new ones load, and the page keeps its height.
+* Back on Posts, the table shows at once.
+* A menu click scrolls to the top of the screen when it is out of view.
 
 = 0.5.1 =
 * The same space on both sides of the screen.
