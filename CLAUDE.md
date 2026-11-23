@@ -2,7 +2,7 @@
 
 Slug `nhrrob-post-insights` · display name "NHR Post Insights" · menu label **Post Insights** (Tools → Post Insights; never "NHR" in the UI).
 
-Private repository, version 0.x, submitted to WordPress.org on 2026-11-23 and in review. `.ai/PRD.md` holds the scope and what was left out on purpose: read it before proposing a feature, and ask Robin before building one it does not list.
+Public repository, version 0.x, submitted to WordPress.org on 2026-11-23 and in review. `.ai/PRD.md` holds the scope and what was left out on purpose: read it before proposing a feature, and ask Robin before building one it does not list.
 
 ## Rules that are specific to this plugin
 
