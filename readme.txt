@@ -74,7 +74,7 @@ In the plugin's `admin/src` folder. `admin/build` is made from it with `@wordpre
 = 0.5.1 =
 * The same space on both sides of the screen.
 * One database query less on every page, and fewer on the Posts screen.
-* An add-on can add screens to the menu and tabs to one post, with the JS filters `nhrrobPostInsights.screens` and `nhrrobPostInsights.postTabs` and the action `nhrrob_post_insights_enqueue`.
+* Another plugin can add screens to the menu and tabs to one post, with the JS filters `nhrrobPostInsights.screens` and `nhrrobPostInsights.postTabs` and the action `nhrrob_post_insights_enqueue`.
 
 = 0.5.0 =
 * New screens: one teal look in light and dark, with a theme switch.
@@ -87,7 +87,7 @@ In the plugin's `admin/src` folder. `admin/build` is made from it with `@wordpre
 * Filters on every screen: a custom range of days next to 7, 30, 90 days and all time, and the post type.
 * Posts has a search of the titles.
 * The filters are kept in the address, so a filtered view can be bookmarked.
-* The filters `nhrrob_post_insights_stats` and `nhrrob_post_insights_posts` pass the chosen range and type to an add-on.
+* The filters `nhrrob_post_insights_stats` and `nhrrob_post_insights_posts` pass the chosen range and type to another plugin.
 
 = 0.3.0 =
 * The screen moved to Tools → Post Insights, with a "View insights" link on the Plugins screen. The old address under Dashboard redirects there.
@@ -98,7 +98,7 @@ In the plugin's `admin/src` folder. `admin/build` is made from it with `@wordpre
 = 0.2.0 =
 * Posts lists every published post, also those without a view, sortable by title, date, views and average time, 20 to a page, with a link to edit each.
 * "All time" next to 7, 30 and 90 days on every screen.
-* An add-on can add columns to Posts and tiles to Overview with the filters `nhrrob_post_insights_columns` and `nhrrob_post_insights_posts`.
+* Another plugin can add columns to Posts and tiles to Overview with the filters `nhrrob_post_insights_columns` and `nhrrob_post_insights_posts`.
 
 = 0.1.0 =
 * First version: views, average time and referrers per post, with a chart of views per day.
