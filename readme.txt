@@ -53,6 +53,7 @@ Its two tables and its one option.
 = 0.5.1 =
 * The same space on both sides of the screen.
 * One database query less on every page, and fewer on the Posts screen.
+* An add-on can add screens to the menu and tabs to one post, with the JS filters `nhrrobPostInsights.screens` and `nhrrobPostInsights.postTabs` and the action `nhrrob_post_insights_enqueue`.
 
 = 0.5.0 =
 * New screens: one teal look in light and dark, with a theme switch.
