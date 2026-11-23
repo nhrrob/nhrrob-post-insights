@@ -20,6 +20,9 @@ import { average, byKind, change, count, dayLabel } from '../format';
 
 const P = 'nhrrob-post-insights-';
 
+// The last table shown, by the route path it came from.
+let last = { path: '', table: null };
+
 /**
  * A column header that sorts the table by its column.
  *
@@ -68,7 +71,22 @@ export default function Posts( {
 } ) {
 	const [ sort, setSort ] = useState( { orderby: 'views', order: 'desc' } );
 	const [ page, setPage ] = useState( 1 );
-	const [ table, setTable ] = useState( null );
+	const path =
+		'/posts?' +
+		query +
+		'&search=' +
+		encodeURIComponent( search ) +
+		'&orderby=' +
+		sort.orderby +
+		'&order=' +
+		sort.order +
+		'&page=' +
+		page;
+	// Coming back to the same table shows it at once, while it is asked again.
+	const [ table, setTable ] = useState( () =>
+		last.path === path ? last.table : null
+	);
+	const [ busy, setBusy ] = useState( true );
 	const [ failed, setFailed ] = useState( '' );
 	const [ words, setWords ] = useState( search );
 	const columns = extra.columns || [];
@@ -86,22 +104,25 @@ export default function Posts( {
 	useEffect( () => setPage( 1 ), [ query, search ] );
 
 	useEffect( () => {
+		// An answer that comes after a newer request was made is dropped.
+		let current = true;
+
 		setFailed( '' );
-		api(
-			'/posts?' +
-				query +
-				'&search=' +
-				encodeURIComponent( search ) +
-				'&orderby=' +
-				sort.orderby +
-				'&order=' +
-				sort.order +
-				'&page=' +
-				page
-		)
-			.then( setTable )
-			.catch( ( e ) => setFailed( e.message || String( e ) ) );
-	}, [ query, search, sort, page ] );
+		setBusy( true );
+		api( path )
+			.then( ( rows ) => {
+				if ( current ) {
+					last = { path, table: rows };
+					setTable( rows );
+				}
+			} )
+			.catch( ( e ) => current && setFailed( e.message || String( e ) ) )
+			.finally( () => current && setBusy( false ) );
+
+		return () => {
+			current = false;
+		};
+	}, [ path ] );
 
 	// Text sorts from A and dates and numbers from the largest, the first time.
 	const onSort = ( orderby ) => {
@@ -330,7 +351,12 @@ export default function Posts( {
 				}
 				flush
 			>
-				{ body }
+				<div
+					className={ P + 'view' }
+					aria-busy={ ( busy && !! table ) || undefined }
+				>
+					{ body }
+				</div>
 				{ table && table.pages > 1 && (
 					<nav
 						className={ P + 'pager' }
