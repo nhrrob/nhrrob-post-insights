@@ -47,7 +47,18 @@ class Admin {
 	public function menu() {
 		/** This filter is documented in includes/Rest.php */
 		$capability = (string) apply_filters( 'nhrrob_post_insights_capability', 'manage_options' );
-		$this->hook = add_management_page( __( 'Post Insights', 'nhrrob-post-insights' ), __( 'Post Insights', 'nhrrob-post-insights' ), $capability, self::SLUG, [ $this, 'render' ] );
+		/**
+		 * Filters the menu this screen sits under: '' keeps it where it is, a
+		 * parent menu's slug moves it there (one menu for several plugins).
+		 *
+		 * @param string $parent Parent menu slug, or ''.
+		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- shared by every NHR plugin, so it can't carry this one's prefix.
+		$parent = (string) apply_filters( 'nhr_admin_parent_menu', '' );
+
+		$this->hook = '' === $parent
+			? add_management_page( __( 'Post Insights', 'nhrrob-post-insights' ), __( 'Post Insights', 'nhrrob-post-insights' ), $capability, self::SLUG, [ $this, 'render' ] )
+			: add_submenu_page( $parent, __( 'Post Insights', 'nhrrob-post-insights' ), __( 'Post Insights', 'nhrrob-post-insights' ), $capability, self::SLUG, [ $this, 'render' ] );
 	}
 
 	/**

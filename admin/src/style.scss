@@ -6,12 +6,12 @@
 $p: 'nhrrob-post-insights';
 
 @mixin dark-tokens {
-	--ir-accent: #5eead4;
-	--ir-on-accent: #04201c;
-	--ir-accent-soft: #123430;
+	--ir-accent: var(--nhr-primary, #5eead4);
+	--ir-on-accent: var(--nhr-on-primary, #04201c);
+	--ir-accent-soft: var(--nhr-soft, #123430);
 	--ir-tint: #123430;
-	--ir-grad-a: #0c3532;
-	--ir-grad-b: #155e57;
+	--ir-grad-a: var(--nhr-grad-a, #0c3532);
+	--ir-grad-b: var(--nhr-grad-b, #155e57);
 	--ir-bar: #2dd4bf;
 	--ir-bar-active: #99f6e4;
 	--ir-up: #4ade80;
@@ -19,26 +19,26 @@ $p: 'nhrrob-post-insights';
 	--ir-warning: #fdba74;
 	--ir-warning-bg: #3a2414;
 	--ir-info-bg: #123430;
-	--ir-surface: #161c1e;
-	--ir-bg: #0f1415;
-	--ir-sunken: #11171a;
+	--ir-surface: var(--nhr-surface, #161c1e);
+	--ir-bg: var(--nhr-bg, #0f1415);
+	--ir-sunken: var(--nhr-sunken, #11171a);
 	--ir-track: #222b2e;
 	--ir-grid: #1f282a;
-	--ir-border: #263033;
-	--ir-border-strong: #3a4648;
-	--ir-text: #e6edf0;
-	--ir-muted: #9aa6ab;
+	--ir-border: var(--nhr-border, #263033);
+	--ir-border-strong: var(--nhr-border-strong, #3a4648);
+	--ir-text: var(--nhr-text, #e6edf0);
+	--ir-muted: var(--nhr-muted, #9aa6ab);
 	--ir-shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
 	color-scheme: dark;
 }
 
 .#{$p}-app {
-	--ir-accent: #0f766e;
-	--ir-on-accent: #fff;
-	--ir-accent-soft: #e3f3f0;
+	--ir-accent: var(--nhr-primary, #0f766e);
+	--ir-on-accent: var(--nhr-on-primary, #fff);
+	--ir-accent-soft: var(--nhr-soft, #e3f3f0);
 	--ir-tint: #e8f5f2;
-	--ir-grad-a: #0d5c56;
-	--ir-grad-b: #13877b;
+	--ir-grad-a: var(--nhr-grad-a, #0d5c56);
+	--ir-grad-b: var(--nhr-grad-b, #13877b);
 	--ir-bar: #14857a;
 	--ir-bar-active: #0b4f4a;
 	--ir-up: #107a4c;
@@ -46,17 +46,17 @@ $p: 'nhrrob-post-insights';
 	--ir-warning: #9a3f07;
 	--ir-warning-bg: #fdf0e1;
 	--ir-info-bg: #e8f5f2;
-	--ir-surface: #fff;
-	--ir-bg: #f6f8f8;
-	--ir-sunken: #f6f8f8;
+	--ir-surface: var(--nhr-surface, #fff);
+	--ir-bg: var(--nhr-bg, #f6f8f8);
+	--ir-sunken: var(--nhr-sunken, #f6f8f8);
 	--ir-track: #edf1f0;
 	--ir-grid: #edf1f0;
-	--ir-border: #dfe5e4;
-	--ir-border-strong: #c3cecc;
-	--ir-text: #1d2327;
-	--ir-muted: #55606a;
+	--ir-border: var(--nhr-border, #dfe5e4);
+	--ir-border-strong: var(--nhr-border-strong, #c3cecc);
+	--ir-text: var(--nhr-text, #1d2327);
+	--ir-muted: var(--nhr-muted, #55606a);
 	--ir-shadow-lg: 0 12px 32px rgba(15, 31, 36, 0.13);
-	--ir-radius: 12px;
+	--ir-radius: var(--nhr-radius, 12px);
 	--ir-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
 	// Horizontal insets come from .wrap alone, so the space is the same on
@@ -69,6 +69,7 @@ $p: 'nhrrob-post-insights';
 	color: var(--ir-text);
 	font-size: 14px;
 	line-height: 1.5;
+	font-family: var(--nhr-font, inherit);
 
 	*,
 	*::before,
