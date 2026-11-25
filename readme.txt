@@ -4,7 +4,7 @@ Tags: analytics, statistics, post views, referrers, privacy
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.6.0
+Stable tag: 0.6.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,6 +65,9 @@ In the plugin's `admin/src` folder. `admin/build` is made from it with `@wordpre
 5. The dark theme.
 
 == Changelog ==
+
+= 0.6.1 =
+* The settings screen can take a shared look (colours, corners, font) and a fixed light or dark theme from another NHR plugin, and keeps its own look when none is set. Developers: the `nhr_admin_parent_menu` filter moves the screen under another menu.
 
 = 0.6.0 =
 * The counts are kept in one table instead of two. The rows of the two old tables are moved into it on the first page load after the update, and the old tables are removed. Nothing changes on screen.

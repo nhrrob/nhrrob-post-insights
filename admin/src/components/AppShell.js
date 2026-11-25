@@ -8,6 +8,12 @@ import { __ } from '@wordpress/i18n';
 import { Icon } from './ui';
 
 const THEME_KEY = 'nhrrob-post-insights-theme';
+
+// A theme fixed for every NHR plugin by another plugin: 'light', 'dark' or
+// 'system'. Anything else is ignored, and the saved choice applies.
+const FORCED = [ 'light', 'dark', 'system' ].includes( window.nhrUi?.theme )
+	? window.nhrUi.theme
+	: '';
 const P = 'nhrrob-post-insights-';
 
 function remember( key, value ) {
@@ -41,36 +47,42 @@ export default function AppShell( {
 	const prefersDark =
 		window.matchMedia &&
 		window.matchMedia( '(prefers-color-scheme: dark)' ).matches;
-	const isDark = theme ? theme === 'dark' : prefersDark;
+	let shown = theme;
+	if ( FORCED ) {
+		shown = FORCED === 'system' ? '' : FORCED;
+	}
+	const isDark = shown ? shown === 'dark' : prefersDark;
 
 	return (
-		<div className={ P + 'app' } data-theme={ theme || undefined }>
+		<div className={ P + 'app nhr-app' } data-theme={ shown || undefined }>
 			<header className={ P + 'bar' }>
 				<Icon name="overview" size={ 20 } />
 				<span className={ P + 'bar__title' }>{ title }</span>
 				<span className={ P + 'bar__spacer' } />
-				<button
-					type="button"
-					className={ P + 'bar__btn' }
-					aria-label={
-						isDark
-							? __(
-									'Switch to light theme',
-									'nhrrob-post-insights'
-							  )
-							: __(
-									'Switch to dark theme',
-									'nhrrob-post-insights'
-							  )
-					}
-					onClick={ () => {
-						const next = isDark ? 'light' : 'dark';
-						remember( THEME_KEY, next );
-						setTheme( next );
-					} }
-				>
-					<Icon name={ isDark ? 'sun' : 'moon' } />
-				</button>
+				{ ! FORCED && (
+					<button
+						type="button"
+						className={ P + 'bar__btn' }
+						aria-label={
+							isDark
+								? __(
+										'Switch to light theme',
+										'nhrrob-post-insights'
+								  )
+								: __(
+										'Switch to dark theme',
+										'nhrrob-post-insights'
+								  )
+						}
+						onClick={ () => {
+							const next = isDark ? 'light' : 'dark';
+							remember( THEME_KEY, next );
+							setTheme( next );
+						} }
+					>
+						<Icon name={ isDark ? 'sun' : 'moon' } />
+					</button>
+				) }
 			</header>
 
 			<div className={ P + 'body' }>
