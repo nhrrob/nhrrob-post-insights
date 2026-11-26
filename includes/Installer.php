@@ -91,11 +91,29 @@ class Installer {
 			) {$charset};"
 		);
 
+		// The version is kept only once the table is there, so a failed create is tried again.
+		if ( ! self::exists( $table ) ) {
+			return;
+		}
+
 		self::migrate( $wpdb->prefix . 'nhrrob_post_insights_daily', "SELECT day, post_id, %s, '', views, seconds FROM %i", self::POST );
 		self::migrate( $wpdb->prefix . 'nhrrob_post_insights_referrers', 'SELECT day, post_id, %s, host, views, 0 FROM %i', self::HOST );
 
 		// Autoloaded: it is read on every request.
 		update_option( self::OPTION, self::DB_VERSION, true );
+	}
+
+	/**
+	 * Whether a table exists.
+	 *
+	 * @param string $table Table.
+	 * @return bool
+	 */
+	private static function exists( $table ) {
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- a check of the plugin's own table, while installing.
+		return $table === $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table ) ) );
 	}
 
 	/**
@@ -110,7 +128,7 @@ class Installer {
 		global $wpdb;
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- moving the plugin's own rows once; $select is one of two fixed strings above.
-		if ( $old !== $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $old ) ) ) ) {
+		if ( ! self::exists( $old ) ) {
 			return;
 		}
 

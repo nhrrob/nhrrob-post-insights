@@ -4,13 +4,14 @@ Tags: analytics, statistics, post views, referrers, privacy
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.6.1
+Stable tag: 0.6.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 How many readers each post gets, where they come from and how long they stay. No cookies, and the numbers stay on your site.
 
 == Description ==
+
 NHR Post Insights counts the views of your posts and pages and shows them in the dashboard. It sets no cookie, stores nothing in the visitor's browser and sends nothing to another service.
 
 ### What it shows
@@ -32,9 +33,11 @@ NHR Post Insights counts the views of your posts and pages and shows them in the
 One small table holds the numbers: per post and day, the views and the time; per post, day and referring site, the views. Of a referrer only the site's name is kept, never the page. No IP address is stored.
 
 == External services ==
+
 This plugin does not connect to any external service.
 
 == Installation ==
+
 1. In the dashboard, go to Plugins → Add New Plugin and search for "NHR Post Insights", or upload the plugin's zip there.
 2. Activate it. Counting starts with the next view of a post; nothing needs to be set up.
 3. Open Tools → Post Insights, or "View insights" under the plugin on the Plugins screen.
@@ -65,6 +68,10 @@ In the plugin's `admin/src` folder. `admin/build` is made from it with `@wordpre
 5. The dark theme.
 
 == Changelog ==
+
+= 0.6.2 =
+* If the table cannot be created, the plugin tries again on the next page load instead of going on without it.
+* The readme's sections are formatted correctly.
 
 = 0.6.1 =
 * The settings screen can take a shared look (colours, corners, font) and a fixed light or dark theme from another NHR plugin, and keeps its own look when none is set. Developers: the `nhr_admin_parent_menu` filter moves the screen under another menu.
